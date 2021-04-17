@@ -24,6 +24,9 @@ endif()
 if(POLICY CMP0069)
 	cmake_policy(SET CMP0069 NEW)
 endif()
+if(POLICY CMP0071)
+	cmake_policy(SET CMP0071 NEW)
+endif()
 if(POLICY CMP0074)
 	cmake_policy(SET CMP0074 NEW)
 endif()
@@ -460,6 +463,8 @@ if( CMAKE_C_COMPILER_ID MATCHES "MSVC")
 
 	# To do: Add /external:... See https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
 	#
+	# /diagnostics:caret                Place a caret under compilation issues similar to
+	#                                   Clang and gcc.
 	# /Zo                               Enhanced debugging of optimised code
 	# /utf-8                            Set Source and Executable character sets to UTF-8
 	#                                   VS2015(MSVC14): On by default when /Zi or /Z7 used.
@@ -469,7 +474,7 @@ if( CMAKE_C_COMPILER_ID MATCHES "MSVC")
 	#                                   https://gitlab.kitware.com/cmake/cmake/commit/f973d49ab9d4c59b93f6dac812a94bb130200836
 	# /Qspectre                         Speculative execution attack mitigation
 	#                                   See https://devblogs.microsoft.com/cppblog/spectre-mitigations-in-msvc/
-	list(APPEND LOCAL_CFLAGS /Zo /utf-8 /guard:cf)
+	list(APPEND LOCAL_CFLAGS /diagnostics:caret /Zo /utf-8 /guard:cf)
 	set(WS_LINK_FLAGS "${WS_LINK_FLAGS} /guard:cf")
 	# /Qspectre is not available for VS2015 or older VS2017. Test for its availability.
 	set(WIRESHARK_COMMON_FLAGS /Qspectre)
@@ -793,6 +798,18 @@ else() # ! MSVC
 		)
 	endif()
 
+	if(ENABLE_COMPILER_COLOR_DIAGNOSTICS)
+		if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+			set(WIRESHARK_COMMON_FLAGS ${WIRESHARK_COMMON_FLAGS}
+				-fcolor-diagnostics
+			)
+		elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+			set(WIRESHARK_COMMON_FLAGS ${WIRESHARK_COMMON_FLAGS}
+				-fdiagnostics-color=always
+			)
+		endif()
+	endif()
+
 	add_definitions(
 		-DG_DISABLE_DEPRECATED
 		-DG_DISABLE_SINGLE_INCLUDES
@@ -928,6 +945,18 @@ if(ENABLE_FUZZER)
 	endif()
 	set(CMAKE_C_FLAGS "-fsanitize=fuzzer-no-link ${CMAKE_C_FLAGS}")
 	set(CMAKE_CXX_FLAGS "-fsanitize=fuzzer-no-link ${CMAKE_CXX_FLAGS}")
+endif()
+
+if(MSVC)
+	set(ENABLE_VLD OFF CACHE BOOL "Whether enable Visual Leak Detect in Debug configuration")
+	if(ENABLE_VLD)
+		include(FindVLD)
+	    if(NOT VLD_FOUND)
+			message(FATAL_ERROR "ENABLE_VLD was requested, but not found!")
+		endif()
+		message(STATUS "Enabling Visual Leak Detector in Debug configuration")
+		set(WS_MSVC_DEBUG_LINK_FLAGS ${VLD_LINK_FLAGS})
+	endif()
 endif()
 
 set(WERROR_COMMON_FLAGS "")
@@ -1123,6 +1152,12 @@ ws_find_package(Systemd BUILD_sdjournal HAVE_SYSTEMD)
 
 # Build the Qt GUI?
 if(BUILD_wireshark)
+	if(NOT CMAKE_VERSION VERSION_LESS "3.10.0")
+		set(CMAKE_AUTOMOC ON)
+		set(CMAKE_AUTOUIC ON)
+		set(CMAKE_AUTORCC ON)
+	endif()
+
 	# Untested, may not work if CMAKE_PREFIX_PATH gets overwritten
 	# somewhere. The if WIN32 in this place is annoying as well.
 	if(WIN32)
@@ -1450,8 +1485,7 @@ endif()
 set(PLUGIN_INSTALL_VERSION_LIBDIR "${PLUGIN_INSTALL_LIBDIR}/${PLUGIN_PATH_ID}")
 set(PLUGIN_VERSION_DIR "plugins/${PLUGIN_PATH_ID}")
 
-add_subdirectory( capchild )
-add_subdirectory( caputils )
+add_subdirectory( capture )
 add_subdirectory( doc )
 add_subdirectory( docbook EXCLUDE_FROM_ALL )
 add_subdirectory( epan )
@@ -1904,6 +1938,15 @@ if(WIN32)
 		WORKING_DIRECTORY $<IF:$<CONFIG:Debug>,${GLIB2_DLL_DIR_DEBUG},${GLIB2_DLL_DIR_RELEASE}>
 		COMMAND_EXPAND_LISTS
 	)
+
+	if (MSVC AND VLD_FOUND)
+		add_custom_command(TARGET copy_cli_dlls PRE_BUILD
+			COMMAND ${CMAKE_COMMAND} -E "$<IF:$<CONFIG:Debug>,copy_if_different,true>"
+			"${VLD_FILES}"
+			"${_dll_output_dir}"
+			COMMAND_EXPAND_LISTS
+		)
+	endif()
 
 	# Optional DLLs and PDBs.
 	set (OPTIONAL_DLLS)
@@ -2392,6 +2435,9 @@ if(BUILD_wireshark AND QT_FOUND)
 		FOLDER "Executables"
 		INSTALL_RPATH "${EXECUTABLE_INSTALL_RPATH}"
 	)
+	if(MSVC)
+		set_target_properties(wireshark PROPERTIES LINK_FLAGS_DEBUG "${WS_MSVC_DEBUG_LINK_FLAGS}")
+	endif()
 	if(ENABLE_APPLICATION_BUNDLE OR WIN32)
 		set_target_properties(wireshark PROPERTIES OUTPUT_NAME Wireshark)
 	endif()
@@ -2462,6 +2508,9 @@ macro(set_extra_executable_properties _executable _folder)
 		FOLDER ${_folder}
 		INSTALL_RPATH "${EXECUTABLE_INSTALL_RPATH}"
 	)
+	if(MSVC)
+		set_target_properties(${_executable} PROPERTIES LINK_FLAGS_DEBUG "${WS_MSVC_DEBUG_LINK_FLAGS}")
+	endif()
 
 	set(PROGLIST ${PROGLIST} ${_executable})
 

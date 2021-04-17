@@ -3215,6 +3215,10 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         </translation>
     </message>
     <message>
+        <source>No streams</source>
+        <translation>Keine Streams</translation>
+    </message>
+    <message>
         <source>Entire conversation (%1)</source>
         <translation>Gesamte Verbindung (%1)</translation>
     </message>
@@ -4240,10 +4244,6 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
 <context>
     <name>ImportTextDialog</name>
     <message>
-        <source>Import From</source>
-        <translation>Importieren von</translation>
-    </message>
-    <message>
         <source>File:</source>
         <translation>Datei:</translation>
     </message>
@@ -4259,6 +4259,14 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <source>Browse…</source>
         <oldsource>Browse...</oldsource>
         <translation>Öffnen...</translation>
+    </message>
+    <message>
+        <source>Hex Dump</source>
+        <translation>Hex Dump</translation>
+    </message>
+    <message>
+        <source>Import a standard hex dump as exported by Wireshark</source>
+        <translation>Standard Hexdump der durch Wireshark exportiert wurde importieren</translation>
     </message>
     <message>
         <source>Offsets in the text file are in octal notation</source>
@@ -4289,6 +4297,58 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>Dezimal</translation>
     </message>
     <message>
+        <source>Regular Expression</source>
+        <translation>Regulärer Ausdruck</translation>
+    </message>
+    <message>
+        <source>Import a file formatted according to a custom regular expression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Packet format regular expression</source>
+        <translation>Regulärer Ausdruck Paketformat</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Perl compatible regular expression capturing a single packet in the file with named groups identifieing data to import. Anchors ^ and $ also match before/after newlines &lt;/p&gt;&lt;p&gt;Required is only a data group, also supported are time, dir and seqno.&lt;/p&gt;&lt;p&gt;Regex flags: DUPNAMES, MULTILINE and NOEMPTY&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is regexHintLabel, it will be set to default_regex_hint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data encoding:</source>
+        <translation>Datenkodierung:</translation>
+    </message>
+    <message>
+        <source>How data is encoded</source>
+        <translation>Wie die Daten codiert sind</translation>
+    </message>
+    <message>
+        <source>&lt;small&gt;&lt;i&gt;reccomended regex:&lt;/small&gt;&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>encodingRegexExample</source>
+        <translation>EncodingRegexBeispiel</translation>
+    </message>
+    <message>
+        <source>List of characters indicating incoming packets</source>
+        <translation>Liste von Zeichen die eingehende Pakete spezifizieren</translation>
+    </message>
+    <message>
+        <source>iI&lt;</source>
+        <translation>iI&lt;</translation>
+    </message>
+    <message>
+        <source>List of characters indicating outgoing packets</source>
+        <translation>Liste von Zeichen die ausgehende Pakete spezifizieren</translation>
+    </message>
+    <message>
+        <source>oO&gt;</source>
+        <translation>oO&gt;</translation>
+    </message>
+    <message>
         <source>Timestamp format:</source>
         <translation>Zeitstempelformat:</translation>
     </message>
@@ -4303,10 +4363,6 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     <message>
         <source>ExportPDU</source>
         <translation>ExportPDU</translation>
-    </message>
-    <message>
-        <source>Payload</source>
-        <translation>Nutzdaten</translation>
     </message>
     <message>
         <source>Maximum frame length:</source>
@@ -4329,12 +4385,28 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>Format um den Zeitstempel in der Textdatei einzulesen (z.B. %H:%M:%S.). Format basiert auf strptime(3)</translation>
     </message>
     <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The format in which to parse timestamps in the text file (e.g. %H:%M:%S.%f).&lt;/p&gt;&lt;p&gt;Format specifiers are based on strptime(3) with the addition of %f for second fractions. The percision of %f is determined from it&apos;s length.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%H:%M:%S.%f</source>
+        <translation>%H:%M:%S.%f</translation>
+    </message>
+    <message>
+        <source>timestampExampleLabel</source>
+        <translation>ZeitstempelBeispielBezeichnung</translation>
+    </message>
+    <message>
         <source>Encapsulation Type:</source>
         <translation>Datenkapselungstyp:</translation>
     </message>
     <message>
         <source>Encapsulation type of the frames in the import capture file</source>
         <translation>Protokoll in das die Frames der zu importiernden Datei eingebettet sind</translation>
+    </message>
+    <message>
+        <source>Dissector</source>
+        <translation>Dissector</translation>
     </message>
     <message>
         <source>The UDP, TCP or SCTP source port for each frame</source>
@@ -4441,8 +4513,20 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>IPv4</translation>
     </message>
     <message>
+        <source>The dissector to use for each frame</source>
+        <translation>Der zu verwendete Dissector für jeden Frame</translation>
+    </message>
+    <message>
         <source>The maximum size of the frames to write to the import capture file (max 256kiB)</source>
         <translation>Die maximale Framegröße beim Schreiben in die Mitschnittdatei (max 256kiB)</translation>
+    </message>
+    <message>
+        <source>Supported fields are data, dir, time, seqno</source>
+        <translation>Unterstützte Felder sind data, dir, time, seqno</translation>
+    </message>
+    <message>
+        <source>Missing capturing group data (use (?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Import From Hex Dump</source>
@@ -4455,18 +4539,6 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     <message>
         <source>Import Text File</source>
         <translation>Aus einer Textdatei importieren</translation>
-    </message>
-    <message>
-        <source>Example: %1</source>
-        <translation>Beispiel: %1</translation>
-    </message>
-    <message>
-        <source>&lt;i&gt;(Wrong date format)&lt;/i&gt;</source>
-        <translation>&lt;i&gt;(Falsches Datenformat)&lt;/i&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;i&gt;(No format will be applied)&lt;/i&gt;</source>
-        <translation>&lt;i&gt;(Kein Format wird angewendet)&lt;/i&gt;</translation>
     </message>
 </context>
 <context>
@@ -6551,6 +6623,10 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>Verbindungsfilter</translation>
     </message>
     <message>
+        <source>Reliable Server Pooling (RSerPool)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Osmux</source>
         <translation>Osmux</translation>
     </message>
@@ -6868,6 +6944,10 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     <message>
         <source>QUIC Stream</source>
         <translation>QUIC Stream</translation>
+    </message>
+    <message>
+        <source>SIP Call</source>
+        <translation>SIP Anfruf</translation>
     </message>
     <message>
         <source>Time Sequence (tcptrace)</source>
@@ -7200,6 +7280,14 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     <message>
         <source>Display Filter Expression…</source>
         <translation>Anzeigefilterausdruck</translation>
+    </message>
+    <message>
+        <source>REGISTER_STAT_GROUP_RSERPOOL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start of &quot;REGISTER_STAT_GROUP_RSERPOOL&quot;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>No GSM statistics registered</source>
@@ -8972,6 +9060,14 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>Jedes Paket auf eine neue Seite drucken</translation>
     </message>
     <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Print capture file information on each page&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capture information header</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use the &amp;quot;+&amp;quot; and &amp;quot;-&amp;quot; keys to zoom the preview in and out. Use the &amp;quot;0&amp;quot; key to reset the zoom level.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&amp;quot;+&amp;quot; und &amp;quot;-&amp;quot; Tasten benutzen, um die Vorschau zu vergrößern oder zu verkleinern. Mit der &amp;quot;0&amp;quot; Taste wird der Zoom zurück gesetzt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -10311,11 +10407,11 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;Forward&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;Reverse&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;Hinweg&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;Rückweg&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;Hinweg&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;Rückweg&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Forward</source>
-        <translation>Hinweg</translation>
+        <translation type="vanished">Hinweg</translation>
     </message>
     <message>
         <source>Packet</source>
@@ -10351,8 +10447,64 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>Status</translation>
     </message>
     <message>
+        <source>Stream %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stream %1 Jitter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stream %1 Difference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stream %1 Delta</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save one stream CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save all stream&apos;s CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Analyze</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open the analysis window for the selected stream(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Replace existing list in RTP Analysis Dialog with new one</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Add to list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add new set to existing list in RTP Analysis Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Remove from playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected streams from list in RTP Analysis Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Reverse</source>
-        <translation>Rückweg</translation>
+        <translation type="vanished">Rückweg</translation>
     </message>
     <message>
         <source>Graph</source>
@@ -10360,132 +10512,140 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show or hide forward jitter values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Jitterwerte vom Hinweg anzeigen oder verbergen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Jitterwerte vom Hinweg anzeigen oder verbergen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Forward Jitter</source>
-        <translation>Jitter Hinweg</translation>
+        <translation type="vanished">Jitter Hinweg</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show or hide forward difference values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Differenzwerte vom Hinweg anzeigen oder verbergen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Differenzwerte vom Hinweg anzeigen oder verbergen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Forward Difference</source>
-        <translation>Differenz Hinweg</translation>
+        <translation type="vanished">Differenz Hinweg</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show or hide forward delta values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Deltawerte vom Hinweg anzeigen oder verbergen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Deltawerte vom Hinweg anzeigen oder verbergen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Forward Delta</source>
-        <translation>Delta Hinweg</translation>
+        <translation type="vanished">Delta Hinweg</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show or hide reverse jitter values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Jitterwerte vom Rückweg anzeigen oder verbergen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Jitterwerte vom Rückweg anzeigen oder verbergen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Reverse Jitter</source>
-        <translation>Jitter Rückweg</translation>
+        <translation type="vanished">Jitter Rückweg</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show or hide reverse difference values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Differenzwerte vom Rückweg anzeigen oder verbergen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Differenzwerte vom Rückweg anzeigen oder verbergen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Reverse Difference</source>
-        <translation>Differenz Rückweg</translation>
+        <translation type="vanished">Differenz Rückweg</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show or hide reverse delta values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Deltawerte vom Rückweg anzeigen oder verbergen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Deltawerte vom Rückweg anzeigen oder verbergen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Reverse Delta</source>
-        <translation>Delta Rückweg</translation>
+        <translation type="vanished">Delta Rückweg</translation>
     </message>
     <message>
         <source>&lt;small&gt;&lt;i&gt;A hint.&lt;/i&gt;&lt;/small&gt;</source>
         <translation>&lt;small&gt;&lt;i&gt;Hinweis&lt;/i&gt;&lt;/small&gt;</translation>
     </message>
     <message>
+        <source>&amp;Export</source>
+        <translation>&amp;Exportieren</translation>
+    </message>
+    <message>
+        <source>Open export menu</source>
+        <translation>Exportmenü öffnen</translation>
+    </message>
+    <message>
         <source>Unsynchronized Forward and Reverse Audio</source>
-        <translation>Asynchrones Audio zwischen Hinweg und Rückweg</translation>
+        <translation type="vanished">Asynchrones Audio zwischen Hinweg und Rückweg</translation>
     </message>
     <message>
         <source>Stream Synchronized Forward and Reverse Audio</source>
-        <translation>Synchronisiertes Audio des Hin- und Rückweges streamen </translation>
+        <translation type="vanished">Synchronisiertes Audio des Hin- und Rückweges streamen </translation>
     </message>
     <message>
         <source>Save the audio data for both channels synchronized to start of earlier stream.</source>
-        <translation>Audiodaten von beiden Kanälen, synchronisiert zum Startzeitpunkt des früheren Streams speichern.</translation>
+        <translation type="vanished">Audiodaten von beiden Kanälen, synchronisiert zum Startzeitpunkt des früheren Streams speichern.</translation>
     </message>
     <message>
         <source>Stream Synchronized Forward Stream Audio</source>
-        <translation>Synchronisiertes Audio des Hinweges streamen</translation>
+        <translation type="vanished">Synchronisiertes Audio des Hinweges streamen</translation>
     </message>
     <message>
         <source>Save the forward stream audio data synchronized to start of earlier stream.</source>
-        <translation>Audiodaten des Hinwegstreams synchronisiert zum Startzeitpunkt des früheren Streams speichern.</translation>
+        <translation type="vanished">Audiodaten des Hinwegstreams synchronisiert zum Startzeitpunkt des früheren Streams speichern.</translation>
     </message>
     <message>
         <source>Stream Synchronized Reverse Stream Audio</source>
-        <translation>Synchronisiertes Audio des Rückweges streamen </translation>
+        <translation type="vanished">Synchronisiertes Audio des Rückweges streamen </translation>
     </message>
     <message>
         <source>Save the reverse stream audio data synchronized to start of earlier stream.</source>
-        <translation>Audiodaten des Rückwegstreams synchronisiert zum Startzeitpunkt des früheren Streams speichern.</translation>
+        <translation type="vanished">Audiodaten des Rückwegstreams synchronisiert zum Startzeitpunkt des früheren Streams speichern.</translation>
     </message>
     <message>
         <source>File Synchronized Forward and Reverse Audio</source>
-        <translation>Audiostream des Hin- und Rückweges speichern</translation>
+        <translation type="vanished">Audiostream des Hin- und Rückweges speichern</translation>
     </message>
     <message>
         <source>Save the audio data for both channels synchronized to start of file.</source>
-        <translation>Audiodaten von beiden Kanälen, synchronisiert zum Startzeitpunkt der Datei speichern.</translation>
+        <translation type="vanished">Audiodaten von beiden Kanälen, synchronisiert zum Startzeitpunkt der Datei speichern.</translation>
     </message>
     <message>
         <source>File Synchronized Forward Stream Audio</source>
-        <translation>Audiostream des Hinweges speichern</translation>
+        <translation type="vanished">Audiostream des Hinweges speichern</translation>
     </message>
     <message>
         <source>Save the forward stream audio data synchronized to start of file.</source>
-        <translation>Audiodaten des Hinwegstreams synchronisiert zum Startzeitpunkt der Datei speichern.</translation>
+        <translation type="vanished">Audiodaten des Hinwegstreams synchronisiert zum Startzeitpunkt der Datei speichern.</translation>
     </message>
     <message>
         <source>File Synchronized Reverse Stream Audio</source>
-        <translation>Audiostream des Rückweges speichern</translation>
+        <translation type="vanished">Audiostream des Rückweges speichern</translation>
     </message>
     <message>
         <source>Save the reverse stream audio data synchronized to start of file.</source>
-        <translation>Audiodaten des Rückwegstreams synchronisiert zum Startzeitpunkt der Datei speichern.</translation>
+        <translation type="vanished">Audiodaten des Rückwegstreams synchronisiert zum Startzeitpunkt der Datei speichern.</translation>
     </message>
     <message>
         <source>Save the unsynchronized audio data for both channels.</source>
         <oldsource>Save the audio data for both channels.</oldsource>
-        <translation>Asynchrone Audiodaten beider Kanäle speichern.</translation>
+        <translation type="vanished">Asynchrone Audiodaten beider Kanäle speichern.</translation>
     </message>
     <message>
         <source>Unsynchronized Forward Stream Audio</source>
         <oldsource>Forward Stream Audio</oldsource>
-        <translation>Asynchroner Audiostream des Hinweges</translation>
+        <translation type="vanished">Asynchroner Audiostream des Hinweges</translation>
     </message>
     <message>
         <source>Save the unsynchronized forward stream audio data.</source>
         <oldsource>Save the forward stream audio data.</oldsource>
-        <translation>Asynchroner Audiostream des Hinweges speichern.</translation>
+        <translation type="vanished">Asynchroner Audiostream des Hinweges speichern.</translation>
     </message>
     <message>
         <source>Unsynchronized Reverse Stream Audio</source>
         <oldsource>Reverse Stream Audio</oldsource>
-        <translation>Asynchroner Audiostream des Rückweges</translation>
+        <translation type="vanished">Asynchroner Audiostream des Rückweges</translation>
     </message>
     <message>
         <source>Save the unsynchronized reverse stream audio data.</source>
         <oldsource>Save the reverse stream audio data.</oldsource>
-        <translation>Asynchroner Audiostream des Rückweges speichern.</translation>
+        <translation type="vanished">Asynchroner Audiostream des Rückweges speichern.</translation>
     </message>
     <message>
         <source>CSV</source>
@@ -10493,23 +10653,43 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>Save both tables as CSV.</source>
-        <translation>Beide Tabellen als CSV Datei sichern.</translation>
+        <translation type="vanished">Beide Tabellen als CSV Datei sichern.</translation>
     </message>
     <message>
         <source>Forward Stream CSV</source>
-        <translation>Hinwegstream CSV</translation>
+        <translation type="vanished">Hinwegstream CSV</translation>
     </message>
     <message>
         <source>Save the forward table as CSV.</source>
-        <translation>Tabelle Hinweg als CSV speichern.</translation>
+        <translation type="vanished">Tabelle Hinweg als CSV speichern.</translation>
     </message>
     <message>
         <source>Reverse Stream CSV</source>
-        <translation>Rückwegstream CSV</translation>
+        <translation type="vanished">Rückwegstream CSV</translation>
     </message>
     <message>
         <source>Save the reverse table as CSV.</source>
-        <translation>Rückweg Tabelle als CSV speichern.</translation>
+        <translation type="vanished">Rückweg Tabelle als CSV speichern.</translation>
+    </message>
+    <message>
+        <source>Save tables as CSV.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current Tab Stream CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save the table on the current tab as CSV.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Tab Streams CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save the table from all tabs as CSV.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save Graph</source>
@@ -10549,11 +10729,7 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>Unable to save RTP data.</source>
-        <translation>RTP Daten können nicht gesichert werden.</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="unfinished">Exportieren</translation>
+        <translation type="vanished">RTP Daten können nicht gesichert werden.</translation>
     </message>
     <message>
         <source>Save Graph As…</source>
@@ -10561,47 +10737,47 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>Can&apos;t synchronize when only one channel is selected</source>
-        <translation>Wenn nur ein Kanal ausgewählt ist, kann nicht synchronisiert werden</translation>
+        <translation type="vanished">Wenn nur ein Kanal ausgewählt ist, kann nicht synchronisiert werden</translation>
     </message>
     <message>
         <source>None of channels was selected</source>
-        <translation>Es wurde kein Kanal ausgewählt</translation>
+        <translation type="vanished">Es wurde kein Kanal ausgewählt</translation>
     </message>
     <message>
         <source>Save forward and reverse stream audio</source>
-        <translation>Audiostream des Hin- und Rückweges speichern</translation>
+        <translation type="vanished">Audiostream des Hin- und Rückweges speichern</translation>
     </message>
     <message>
         <source>Raw (*.raw)</source>
-        <translation>Raw (*.raw)</translation>
+        <translation type="vanished">Raw (*.raw)</translation>
     </message>
     <message>
         <source>Saving %1…</source>
-        <translation>Speichere %1…</translation>
+        <translation type="vanished">Speichere %1…</translation>
     </message>
     <message>
         <source>Analyzing RTP</source>
-        <translation>Analysiere RTP</translation>
+        <translation type="vanished">Analysiere RTP</translation>
     </message>
     <message>
         <source>Information</source>
-        <translation>Information</translation>
+        <translation type="vanished">Information</translation>
     </message>
     <message>
         <source>Save was interrupted</source>
-        <translation>Speichern wurde unterbrochen</translation>
+        <translation type="vanished">Speichern wurde unterbrochen</translation>
     </message>
     <message>
         <source>Save or read of file was failed during saving</source>
-        <translation>Speichern oder Lesen der Datei war fehlerhaft</translation>
+        <translation type="vanished">Speichern oder Lesen der Datei war fehlerhaft</translation>
     </message>
     <message>
         <source>Codec is not supported, file is incomplete</source>
-        <translation>Codec wird nicht unterstützt. Datei ist unvollständig</translation>
+        <translation type="vanished">Codec wird nicht unterstützt. Datei ist unvollständig</translation>
     </message>
     <message>
         <source>Codec rate is not supported, file is incomplete</source>
-        <translation>Codecrate wird nicht unterstützt. Datei ist unvollständig</translation>
+        <translation type="vanished">Codecrate wird nicht unterstützt. Datei ist unvollständig</translation>
     </message>
     <message>
         <source>SSRC value not found.</source>
@@ -10609,11 +10785,11 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>No streams found.</source>
-        <translation>Keine Streams gefunden</translation>
+        <translation type="vanished">Keine Streams gefunden</translation>
     </message>
     <message>
         <source>%1 streams found.</source>
-        <translation>%1 Streams gefunden.</translation>
+        <translation type="vanished">%1 Streams gefunden.</translation>
     </message>
     <message>
         <source> G: Go to packet, N: Next problem packet</source>
@@ -10621,7 +10797,7 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>No Audio</source>
-        <translation>Kein Ton</translation>
+        <translation type="vanished">Kein Ton</translation>
     </message>
     <message>
         <source>Portable Document Format (*.pdf)</source>
@@ -10641,63 +10817,63 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>Can&apos;t save in a file: Wrong length of captured packets.</source>
-        <translation>Speichern in eine Datei fehlgeschlagen: Falsche Länge des aufgezeichneten Pakets.</translation>
+        <translation type="vanished">Speichern in eine Datei fehlgeschlagen: Falsche Länge des aufgezeichneten Pakets.</translation>
     </message>
     <message>
         <source>Can&apos;t save in a file: RTP data with padding.</source>
-        <translation>Speichern in eine Datei fehlgeschlagen: RTP Daten mit Blindgruppen.</translation>
+        <translation type="vanished">Speichern in eine Datei fehlgeschlagen: RTP Daten mit Blindgruppen.</translation>
     </message>
     <message>
         <source>Can&apos;t save in a file: File I/O problem.</source>
-        <translation>Speichern in eine Datei fehlgeschlagen: I/O Problem.</translation>
+        <translation type="vanished">Speichern in eine Datei fehlgeschlagen: I/O Problem.</translation>
     </message>
     <message>
         <source>Can&apos;t save in a file: Not all data in all packets was captured.</source>
-        <translation>Speichern in eine Datei fehlgeschlagen: Nicht alle Daten aufgezeichnet.</translation>
+        <translation type="vanished">Speichern in eine Datei fehlgeschlagen: Nicht alle Daten aufgezeichnet.</translation>
     </message>
     <message>
         <source>Save forward stream audio</source>
-        <translation>Audiostream des Hinwegs speichern</translation>
+        <translation type="vanished">Audiostream des Hinwegs speichern</translation>
     </message>
     <message>
         <source>Save reverse stream audio</source>
-        <translation>Audiostream des Rückweges speichern</translation>
+        <translation type="vanished">Audiostream des Rückweges speichern</translation>
     </message>
     <message>
         <source>Sun Audio (*.au)</source>
-        <translation>Sun Audio (*.au)</translation>
+        <translation type="vanished">Sun Audio (*.au)</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation>Warnungen</translation>
+        <translation type="vanished">Warnungen</translation>
     </message>
     <message>
         <source>Unable to save in that format</source>
-        <translation>Dieses Format kann nicht gespeichert werden</translation>
+        <translation type="vanished">Dieses Format kann nicht gespeichert werden</translation>
     </message>
     <message>
         <source>Unable to save %1</source>
-        <translation>Kann %1 nicht sichern</translation>
+        <translation type="vanished">Kann %1 nicht sichern</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>Fehler</translation>
+        <translation type="vanished">Fehler</translation>
     </message>
     <message>
         <source>Unknown error occurred</source>
-        <translation>Unbekannter Fehler</translation>
+        <translation type="vanished">Unbekannter Fehler</translation>
     </message>
     <message>
         <source>Save forward stream CSV</source>
-        <translation>Hinweg Stream als CSV speichern</translation>
+        <translation type="vanished">Hinweg Stream als CSV speichern</translation>
     </message>
     <message>
         <source>Save reverse stream CSV</source>
-        <translation>Rückweg Stream als CSV speichern</translation>
+        <translation type="vanished">Rückweg Stream als CSV speichern</translation>
     </message>
     <message>
         <source>Save CSV</source>
-        <translation>Als CSV speichern</translation>
+        <translation type="vanished">Als CSV speichern</translation>
     </message>
     <message>
         <source>Comma-separated values (*.csv)</source>
@@ -10767,7 +10943,7 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>Sample Rate (Hz)</source>
-        <translation>Sample Rate (Hz)</translation>
+        <translation type="vanished">Sample Rate (Hz)</translation>
     </message>
     <message>
         <source>Payloads</source>
@@ -10780,6 +10956,10 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     <message>
         <source>Output Device:</source>
         <translation>Ausgabegerät:</translation>
+    </message>
+    <message>
+        <source>Output Audio Rate:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Jitter Buffer:</source>
@@ -10831,6 +11011,38 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>Uhrzeit</translation>
     </message>
     <message>
+        <source>&amp;Export</source>
+        <translation type="unfinished">&amp;Exportieren</translation>
+    </message>
+    <message>
+        <source>Export audio of all unmuted selected channels or export payload of one channel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Stream Synchronized Audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save audio data synchronized to start of the earliest stream.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;File Synchronized Audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save audio data synchronized to start of the capture file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Payload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save RTP payload of selected stream.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Reset Graph</source>
         <translation>Graph zurücksetzen</translation>
     </message>
@@ -10840,95 +11052,111 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>Go To Setup Packet</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur Paketeinstellung gehen</translation>
     </message>
     <message>
         <source>Go to setup packet of stream currently under the cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur Paketeinstellung für den Stream gehen auf dem aktueller der Mauszeiger zeigt</translation>
     </message>
     <message>
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Stummschalten</translation>
     </message>
     <message>
         <source>Mute selected streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgewählten Stream stumm schalten</translation>
     </message>
     <message>
         <source>Unmute</source>
-        <translation type="unfinished"></translation>
+        <translation>Stummschaltung aufheben</translation>
     </message>
     <message>
         <source>Unmute selected streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Stummschaltung ausgewählter Streams aufheben</translation>
     </message>
     <message>
         <source>Invert muting of selected streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Stummschaltung ausgewählter Streams umkehren</translation>
     </message>
     <message>
         <source>Route audio to left channel of selected streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio für ausgewählte Streams auf linken Kanal lenken</translation>
     </message>
     <message>
         <source>Route audio to left and right channel of selected streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio für ausgewählte Streams auf linken und rechten Kanal lenken</translation>
     </message>
     <message>
         <source>Route audio to right channel of selected streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio für ausgewählte Streams auf rechten Kanal lenken</translation>
     </message>
     <message>
         <source>Remove Streams</source>
-        <translation type="unfinished"></translation>
+        <translation>Streams entfernen</translation>
     </message>
     <message>
         <source>Remove selected streams from the list</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgewählten Stream aus der Liste entfernen</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle</translation>
     </message>
     <message>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle auswählen</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine</translation>
     </message>
     <message>
         <source>Clear selection</source>
-        <translation type="unfinished">Auswahl löschen</translation>
+        <translation>Auswahl löschen</translation>
     </message>
     <message>
         <source>Invert</source>
-        <translation type="unfinished">Invertieren</translation>
+        <translation>Invertieren</translation>
     </message>
     <message>
         <source>Invert selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswahl umkehren</translation>
     </message>
     <message>
         <source>Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Abspielen/Pause</translation>
     </message>
     <message>
         <source>Start playing or pause playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Abspielen starten oder pausieren</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Stoppen</translation>
     </message>
     <message>
         <source>Stop playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Abspielen stoppen</translation>
     </message>
     <message>
         <source>Zoom In</source>
         <translation>Vergrößern</translation>
+    </message>
+    <message>
+        <source>SR (Hz)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sample rate of codec</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PR (Hz)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play rate of decoded audio (depends e. g. on selected sound card)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Zoom Out</source>
@@ -10984,15 +11212,47 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswählen</translation>
     </message>
     <message>
         <source>Audio Routing</source>
         <translation>Audio Routing</translation>
     </message>
     <message>
-        <source>Play Streams</source>
-        <translation>Streams abspielen</translation>
+        <source>&amp;Play Streams</source>
+        <translation>Streams abs&amp;pielen</translation>
+    </message>
+    <message>
+        <source>Open RTP player dialog</source>
+        <translation>RTP Abspieldialog öffnen</translation>
+    </message>
+    <message>
+        <source>&amp;Set playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Replace existing playlist in RTP Player with new one</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Add to playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add new set to existing playlist in RTP Player</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Remove from playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected streams from playlist in RTP Player</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Audio</source>
+        <translation type="unfinished">Kein Ton</translation>
     </message>
     <message>
         <source>Decoding streams...</source>
@@ -11013,6 +11273,62 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     <message>
         <source>Inserted Silence</source>
         <translation>Eingefügte Stille</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WAV (*.wav)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sun Audio (*.au)</source>
+        <translation type="unfinished">Sun Audio (*.au)</translation>
+    </message>
+    <message>
+        <source>Save audio</source>
+        <translation type="unfinished">Audio speichern</translation>
+    </message>
+    <message>
+        <source>Raw (*.raw)</source>
+        <translation type="unfinished">Raw (*.raw)</translation>
+    </message>
+    <message>
+        <source>Save payload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No stream selected or none of selected streams provide audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished">Fehler</translation>
+    </message>
+    <message>
+        <source>All selected streams must use same play rate. Manual set of Output Audio Rate might help.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save failed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t write header of AU file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t write header of WAV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Payload save works with just one audio stream.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Double click to change audio routing</source>
@@ -11114,8 +11430,20 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>Uhrzeit</translation>
     </message>
     <message>
-        <source>Find Reverse</source>
-        <translation>Den Entgegengesetzten finden</translation>
+        <source>Find &amp;Reverse</source>
+        <translation>Den Entgegengesetzten finden (&amp;R)</translation>
+    </message>
+    <message>
+        <source>Prepare &amp;Filter</source>
+        <translation>&amp;Filter vorbereiten</translation>
+    </message>
+    <message>
+        <source>&amp;Export</source>
+        <translation>&amp;Exportieren</translation>
+    </message>
+    <message>
+        <source>&amp;Analyze</source>
+        <translation>Analysieren</translation>
     </message>
     <message>
         <source>Find the reverse stream matching the selected forward stream.</source>
@@ -11139,35 +11467,27 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle</translation>
     </message>
     <message>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle auswählen</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine</translation>
     </message>
     <message>
         <source>Clear selection</source>
-        <translation type="unfinished">Auswahl löschen</translation>
+        <translation>Auswahl löschen</translation>
     </message>
     <message>
         <source>Invert</source>
-        <translation type="unfinished">Invertieren</translation>
+        <translation>Invertieren</translation>
     </message>
     <message>
         <source>Invert selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select None</source>
-        <translation type="vanished">Nichts auswählen</translation>
-    </message>
-    <message>
-        <source>Undo stream selection.</source>
-        <translation type="vanished">Streamauswahl rückgängig machen.</translation>
+        <translation>Auswahl umkehren</translation>
     </message>
     <message>
         <source>Go To Setup</source>
@@ -11182,20 +11502,12 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>G</translation>
     </message>
     <message>
-        <source>Prepare Filter</source>
-        <translation>Als Filter vorbereiten</translation>
-    </message>
-    <message>
         <source>Prepare a filter matching the selected stream(s).</source>
         <translation>Filter für ausgewählten Stream vorbereiten.</translation>
     </message>
     <message>
         <source>P</source>
         <translation>P</translation>
-    </message>
-    <message>
-        <source>Export As RTPDump</source>
-        <translation>RTPDump exportieren</translation>
     </message>
     <message>
         <source>Export the stream payload as rtpdump</source>
@@ -11206,12 +11518,21 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>E</translation>
     </message>
     <message>
-        <source>Analyze</source>
-        <translation>Analysieren</translation>
+        <source>Open the analysis window for the selected stream(s) and add it to it</source>
+        <oldsource>Open the analysis window for the selected stream(s)</oldsource>
+        <translation type="unfinished">Analysefenster für die ausgewählten Streams anzeigen</translation>
     </message>
     <message>
-        <source>Open the analysis window for the selected stream(s)</source>
-        <translation>Analysefenster für die ausgewählten Streams anzeigen</translation>
+        <source>A</source>
+        <translation>A</translation>
+    </message>
+    <message>
+        <source>Cop&amp;y</source>
+        <translation>Kopieren (&amp;y)</translation>
+    </message>
+    <message>
+        <source>Open copy menu</source>
+        <translation>Kopiermenü öffnen</translation>
     </message>
     <message>
         <source>Copy as CSV</source>
@@ -11234,20 +11555,8 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>RTP Stream</translation>
     </message>
     <message>
-        <source>Export…</source>
-        <translation type="vanished">Exportieren…</translation>
-    </message>
-    <message>
         <source>Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Kopieren</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="unfinished">Exportieren</translation>
+        <translation>Auswählen</translation>
     </message>
     <message>
         <source>as CSV</source>
@@ -11267,7 +11576,7 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>No Audio</source>
-        <translation>Kein Ton</translation>
+        <translation type="vanished">Kein Ton</translation>
     </message>
     <message>
         <source>Save RTPDump As…</source>
@@ -12110,14 +12419,6 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>Kommentar</translation>
     </message>
     <message>
-        <source>Save As…</source>
-        <translation type="vanished">Speichern als…</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="unfinished">Exportieren</translation>
-    </message>
-    <message>
         <source>No data</source>
         <translation>Keine Daten</translation>
     </message>
@@ -12268,12 +12569,32 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>Diagramm zurücksetzen</translation>
     </message>
     <message>
+        <source>Reset &amp;Diagram</source>
+        <translation>&amp;Diagramm zurücksetzen</translation>
+    </message>
+    <message>
         <source>Reset the diagram to its initial state.</source>
         <translation>Diagramm in Ursprungszustand zurücksetzen</translation>
     </message>
     <message>
         <source>0</source>
         <translation>0</translation>
+    </message>
+    <message>
+        <source>&amp;Reset Diagram</source>
+        <translation>Diagramm zu&amp;rücksetzen</translation>
+    </message>
+    <message>
+        <source>Reset the diagram to its initial state</source>
+        <translation>Diagramm in Ursprungszustand zurücksetzen</translation>
+    </message>
+    <message>
+        <source>&amp;Export</source>
+        <translation>&amp;Exportieren</translation>
+    </message>
+    <message>
+        <source>Export diagram</source>
+        <translation>Diagramm exportieren</translation>
     </message>
     <message>
         <source>Zoom In</source>
@@ -13571,36 +13892,48 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>Uhrzeit</translation>
     </message>
     <message>
-        <source>All</source>
+        <source>Flow &amp;Sequence</source>
+        <translation>Flow &amp;Sequenzen</translation>
+    </message>
+    <message>
+        <source>Show flow sequence for selected call(s).</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prepare &amp;Filter</source>
+        <translation>&amp;Filter vorbereiten</translation>
+    </message>
+    <message>
+        <source>Prepare a filter matching the selected calls(s).</source>
+        <translation>Filter für ausgewählten Anrufe vorbereiten.</translation>
+    </message>
+    <message>
+        <source>Cop&amp;y</source>
+        <translation>Kopieren (&amp;y)</translation>
+    </message>
+    <message>
+        <source>Open copy menu</source>
+        <translation>Kopiermenü öffnen</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>Alle</translation>
     </message>
     <message>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle auswählen</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine</translation>
     </message>
     <message>
         <source>Invert</source>
-        <translation type="unfinished">Invertieren</translation>
+        <translation>Invertieren</translation>
     </message>
     <message>
         <source>Invert selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select &amp;All</source>
-        <translation type="vanished">&amp;Alle auswählen</translation>
-    </message>
-    <message>
-        <source>Select all calls</source>
-        <translation type="vanished">Alle Anrufe auswählen</translation>
-    </message>
-    <message>
-        <source>Select &amp;None</source>
-        <translation type="vanished">&amp;Nichts auswählen</translation>
+        <translation>Auswahl umkehren</translation>
     </message>
     <message>
         <source>Clear selection</source>
@@ -13635,18 +13968,6 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
         <translation>VoIP Anrufe</translation>
     </message>
     <message>
-        <source>Prepare Filter</source>
-        <translation>Als Filter vorbereiten</translation>
-    </message>
-    <message>
-        <source>Flow Sequence</source>
-        <translation>Flow Sequenzen</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Kopieren</translation>
-    </message>
-    <message>
         <source>as CSV</source>
         <translation>als CSV</translation>
     </message>
@@ -13656,11 +13977,11 @@ Um zum Beispiel eine neue Datei zu jeder vollen Stunde zu haben, 1 Stunde angebe
     </message>
     <message>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswählen</translation>
     </message>
     <message>
         <source>No Audio</source>
-        <translation>Kein Ton</translation>
+        <translation type="vanished">Kein Ton</translation>
     </message>
 </context>
 <context>

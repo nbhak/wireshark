@@ -16,6 +16,7 @@
 #include <wsutil/wsgcrypt.h>
 #include <wsutil/crc32.h>
 #include <wsutil/pint.h>
+#include <wsutil/glib-compat.h>
 
 #include <epan/proto.h> /* for DISSECTOR_ASSERT. */
 #include <epan/tvbuff.h>
@@ -367,7 +368,7 @@ Dot11DecryptRc4KeyData(const guint8 *decryption_key, guint decryption_key_len,
         gcry_cipher_close(rc4_handle);
         return NULL;
     }
-    decrypted_key = (guint8 *)g_memdup(encrypted_keydata, encrypted_keydata_len);
+    decrypted_key = (guint8 *)g_memdup2(encrypted_keydata, encrypted_keydata_len);
     if (!decrypted_key) {
         gcry_cipher_close(rc4_handle);
         return NULL;
@@ -573,7 +574,7 @@ Dot11DecryptAddSa(
     if (existing_sa != NULL) {
         sa = Dot11DecryptPrependSa(existing_sa, sa);
     } else {
-        void *key = g_memdup(id, sizeof(DOT11DECRYPT_SEC_ASSOCIATION_ID));
+        void *key = g_memdup2(id, sizeof(DOT11DECRYPT_SEC_ASSOCIATION_ID));
         g_hash_table_insert(ctx->sa_hash, key, sa);
     }
     return sa;
@@ -1833,7 +1834,9 @@ Dot11DecryptRsna4WHandshake(
 gint
 Dot11DecryptScanFtAssocForKeys(
     const PDOT11DECRYPT_CONTEXT ctx,
-    const PDOT11DECRYPT_ASSOC_PARSED assoc_parsed)
+    const PDOT11DECRYPT_ASSOC_PARSED assoc_parsed,
+    guint8 *decrypted_gtk, size_t *decrypted_len,
+    DOT11DECRYPT_KEY_ITEM* used_key)
 {
     DOT11DECRYPT_SEC_ASSOCIATION_ID id;
 
@@ -1980,14 +1983,19 @@ Dot11DecryptScanFtAssocForKeys(
             return DOT11DECRYPT_RET_UNSUCCESS;
         }
         Dot11DecryptCopyBroadcastKey(ctx, decrypted_key, decrypted_key_len, &id);
+        *decrypted_len = decrypted_key_len;
+        memcpy(decrypted_gtk, decrypted_key, decrypted_key_len);
     }
+    Dot11DecryptCopyKey(sa, used_key);
     return DOT11DECRYPT_RET_SUCCESS_HANDSHAKE;
 }
 #else
 gint
 Dot11DecryptScanFtAssocForKeys(
     const PDOT11DECRYPT_CONTEXT ctx _U_,
-    const PDOT11DECRYPT_ASSOC_PARSED assoc_parsed _U_)
+    const PDOT11DECRYPT_ASSOC_PARSED assoc_parsed _U_,
+    guint8 *decrypted_gtk _U_, size_t *decrypted_len _U_,
+    DOT11DECRYPT_KEY_ITEM* used_item _U_)
 {
     DEBUG_PRINT_LINE("Skipped Dot11DecryptScanFtAssocForKeys, libgcrypt >= 1.6", DEBUG_LEVEL_3);
     return DOT11DECRYPT_RET_UNSUCCESS;

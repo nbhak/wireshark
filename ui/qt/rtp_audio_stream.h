@@ -19,6 +19,7 @@
 #include <epan/address.h>
 #include <ui/rtp_stream.h>
 #include <ui/qt/utils/rtp_audio_routing.h>
+#include <ui/rtp_media.h>
 
 #include <QAudio>
 #include <QColor>
@@ -31,7 +32,7 @@
 
 class QAudioFormat;
 class QAudioOutput;
-class QTemporaryFile;
+class QIODevice;
 
 struct _rtp_info;
 struct _rtp_sample;
@@ -40,7 +41,7 @@ struct _rtp_sample;
 typedef struct {
     qint64  len;
     guint32 frame_num;
-} _rtp_packet_frame;
+} rtp_frame_info;
 
 class RtpAudioStream : public QObject
 {
@@ -52,8 +53,8 @@ public:
     ~RtpAudioStream();
     bool isMatch(const rtpstream_info_t *rtpstream) const;
     bool isMatch(const struct _packet_info *pinfo, const struct _rtp_info *rtp_info) const;
-    //void addRtpStream(const rtpstream_info_t *rtpstream);
     void addRtpPacket(const struct _packet_info *pinfo, const struct _rtp_info *rtp_info);
+    void clearPackets();
     void reset(double global_start_time);
     AudioRouting getAudioRouting();
     void setAudioRouting(AudioRouting audio_routing);
@@ -61,7 +62,9 @@ public:
 
     double startRelTime() const { return start_rel_time_; }
     double stopRelTime() const { return stop_rel_time_; }
-    unsigned sampleRate() const { return audio_out_rate_; }
+    unsigned sampleRate() const { return first_sample_rate_; }
+    unsigned playRate() const { return audio_out_rate_; }
+    void setRequestedPlayRate(unsigned new_rate) { audio_requested_out_rate_ = new_rate; }
     const QStringList payloadNames() const;
 
     /**
@@ -146,11 +149,19 @@ public:
     void setStereoRequired(bool stereo_required) { stereo_required_ = stereo_required; }
     qint16 getMaxSampleValue() { return max_sample_val_; }
     void setMaxSampleValue(gint16 max_sample_val) { max_sample_val_used_ = max_sample_val; }
+    void sampleFileSeek(qint64 samples);
+    qint64 sampleFileRead(SAMPLE *sample);
+    qint64 getLeadSilenceSamples() { return prepend_samples_; }
+    qint64 getTotalSamples() { return (sample_file_->size()/(qint64)sizeof(SAMPLE)); }
+    bool savePayload(QIODevice *file);
+    guint getHash() { return rtpstream_id_to_hash(&id_); }
+    rtpstream_id_t *getID() { return &id_; }
+    QString getIDAsQString();
 
 signals:
     void processedSecs(double secs);
     void playbackError(const QString error_msg);
-    void finishedPlaying(RtpAudioStream *stream);
+    void finishedPlaying(RtpAudioStream *stream, QAudio::Error error);
 
 private:
     // Used to identify unique streams.
@@ -158,20 +169,20 @@ private:
     rtpstream_id_t id_;
 
     QVector<struct _rtp_packet *>rtp_packets_;
-    QTemporaryFile *sample_file_;       // Stores waveform samples
-    QTemporaryFile *sample_file_frame_; // Stores _rtp_packet_frame per packet
+    QIODevice *sample_file_;       // Stores waveform samples
+    QIODevice *sample_file_frame_; // Stores rtp_packet_info per packet
     QIODevice *temp_file_;
     struct _GHashTable *decoders_hash_;
-    // TODO: It is not used
-    //QList<const rtpstream_info_t *>rtpstreams_;
     double global_start_rel_time_;
     double start_abs_offset_;
     double start_rel_time_;
     double stop_rel_time_;
-    qint64 prepend_samples_; // Count of silence samples to match other streams
+    qint64 prepend_samples_; // Count of silence samples at begin of the stream to align with other streams
     AudioRouting audio_routing_;
     bool stereo_required_;
+    quint32 first_sample_rate_;
     quint32 audio_out_rate_;
+    quint32 audio_requested_out_rate_;
     QSet<QString> payload_names_;
     struct SpeexResamplerState_ *audio_resampler_;
     struct SpeexResamplerState_ *visual_resampler_;
@@ -196,9 +207,12 @@ private:
 
     void decodeAudio(QAudioDeviceInfo out_device);
     void decodeVisual();
+    quint32 calculateAudioOutRate(QAudioDeviceInfo out_device, unsigned int sample_rate, unsigned int requested_out_rate);
+    SAMPLE *resizeBufferIfNeeded(SAMPLE *buff, gint32 *buff_bytes, qint64 requested_size);
 
 private slots:
     void outputStateChanged(QAudio::State new_state);
+    void delayedStopStream();
 };
 
 #endif // QT_MULTIMEDIA_LIB

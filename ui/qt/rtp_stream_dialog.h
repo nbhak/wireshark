@@ -29,6 +29,8 @@ class RtpStreamDialog : public WiresharkDialog
 public:
     explicit RtpStreamDialog(QWidget &parent, CaptureFile &cf);
     ~RtpStreamDialog();
+    void selectRtpStream(rtpstream_id_t *id);
+    void deselectRtpStream(rtpstream_id_t *id);
 
 signals:
     // Tells the packet list to redraw. An alternative might be to add a
@@ -37,11 +39,21 @@ signals:
     void packetsMarked();
     void updateFilter(QString filter, bool force = false);
     void goToPacket(int packet_num);
+    void rtpPlayerDialogReplaceRtpStreams(QVector<rtpstream_info_t *> stream_infos);
+    void rtpPlayerDialogAddRtpStreams(QVector<rtpstream_info_t *> stream_infos);
+    void rtpPlayerDialogRemoveRtpStreams(QVector<rtpstream_info_t *> stream_infos);
+    void rtpAnalysisDialogReplaceRtpStreams(QVector<rtpstream_id_t *> stream_infos);
+    void rtpAnalysisDialogAddRtpStreams(QVector<rtpstream_id_t *> stream_infos);
+    void rtpAnalysisDialogRemoveRtpStreams(QVector<rtpstream_id_t *> stream_infos);
 
 public slots:
-    void selectRtpStream(rtpstream_id_t *id);
-    void deselectRtpStream(rtpstream_id_t *id);
     void displayFilterSuccess(bool success);
+    void rtpPlayerReplace();
+    void rtpPlayerAdd();
+    void rtpPlayerRemove();
+    void rtpAnalysisReplace();
+    void rtpAnalysisAdd();
+    void rtpAnalysisRemove();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -74,27 +86,29 @@ private:
     QList<QVariant> streamRowData(int row) const;
     void freeLastSelected();
     void invertSelection();
-
+    QVector<rtpstream_info_t *>getSelectedRtpStreams();
+    QVector<rtpstream_id_t *>getSelectedRtpStreamIDs();
 
 private slots:
     void showStreamMenu(QPoint pos);
     void on_actionCopyAsCsv_triggered();
     void on_actionCopyAsYaml_triggered();
-    void on_actionFindReverse_triggered();
+    void on_actionFindReverseNormal_triggered();
+    void on_actionFindReversePair_triggered();
+    void on_actionFindReverseSingle_triggered();
     void on_actionGoToSetup_triggered();
     void on_actionMarkPackets_triggered();
     void on_actionPrepareFilter_triggered();
     void on_streamTreeWidget_itemSelectionChanged();
     void on_buttonBox_helpRequested();
-    void on_buttonBox_clicked(QAbstractButton *button);
     void on_actionExportAsRtpDump_triggered();
-    void on_actionAnalyze_triggered();
     void captureEvent(CaptureEvent e);
     void on_displayFilterCheckBox_toggled(bool checked);
     void on_todCheckBox_toggled(bool checked);
     void on_actionSelectAll_triggered();
     void on_actionSelectInvert_triggered();
     void on_actionSelectNone_triggered();
+    void on_actionAnalyze_triggered();
 };
 
 #endif // RTP_STREAM_DIALOG_H

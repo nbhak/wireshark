@@ -36,6 +36,7 @@
 
 #include <ui/clopts_common.h>
 #include <ui/cmdarg_err.h>
+#include <ui/exit_codes.h>
 #include <ui/urls.h>
 #include <wsutil/filesystem.h>
 #include <wsutil/privileges.h>
@@ -101,19 +102,19 @@
 #include <ui/qt/widgets/splash_overlay.h>
 #include "ui/qt/wireshark_application.h"
 
-#include "caputils/capture-pcap-util.h"
+#include "capture/capture-pcap-util.h"
 
 #include <QMessageBox>
 #include <QScreen>
 
 #ifdef _WIN32
-#  include "caputils/capture-wpcap.h"
+#  include "capture/capture-wpcap.h"
 #  include <wsutil/file_util.h>
 #endif /* _WIN32 */
 
 #ifdef HAVE_AIRPCAP
-#  include <caputils/airpcap.h>
-#  include <caputils/airpcap_loader.h>
+#  include <capture/airpcap.h>
+#  include <capture/airpcap_loader.h>
 //#  include "airpcap_dlg.h"
 //#  include "airpcap_gui_utils.h"
 #endif
@@ -126,11 +127,6 @@
 #endif
 
 #include <ui/qt/utils/qt_ui_utils.h>
-
-#define INVALID_OPTION 1
-#define INIT_FAILED 2
-#define INVALID_CAPABILITY 2
-#define INVALID_LINK_TYPE 2
 
 //#define DEBUG_STARTUP_TIME 1
 /*
@@ -888,47 +884,49 @@ int main(int argc, char *qt_argv[])
         }
     }
 
+    /*
+     * If requested, list the link layer types and/or time stamp types
+     * and exit.
+     */
     if (caps_queries) {
-        /* Get the list of link-layer types for the capture devices. */
-        if_capabilities_t *caps;
         guint i;
-        interface_t *device;
-        for (i = 0; i < global_capture_opts.all_ifaces->len; i++) {
-            int if_caps_queries = caps_queries;
-            device = &g_array_index(global_capture_opts.all_ifaces, interface_t, i);
-            if (device->selected) {
-#if defined(HAVE_PCAP_CREATE)
-                caps = capture_get_if_capabilities(device->name, device->monitor_mode_supported, NULL, &err_str, &err_str_secondary, main_window_update);
-#else
-                caps = capture_get_if_capabilities(device->name, FALSE, NULL, &err_str, &err_str_secondary, main_window_update);
-#endif
-                if (caps == NULL) {
-                    cmdarg_err("%s%s%s", err_str, err_str_secondary ? "\n" : "", err_str_secondary ? err_str_secondary : "");
-                    g_free(err_str);
-                    g_free(err_str_secondary);
-                    ret_val = INVALID_CAPABILITY;
-                    goto clean_exit;
-                }
-            if (caps->data_link_types == NULL) {
-                cmdarg_err("The capture device \"%s\" has no data link types.", device->name);
-                ret_val = INVALID_LINK_TYPE;
-                goto clean_exit;
+
+#ifdef _WIN32
+        create_console();
+#endif /* _WIN32 */
+        /* Get the list of link-layer types for the capture devices. */
+        ret_val = EXIT_SUCCESS;
+        for (i = 0; i < global_capture_opts.ifaces->len; i++) {
+            interface_options *interface_opts;
+            if_capabilities_t *caps;
+            char *auth_str = NULL;
+
+            interface_opts = &g_array_index(global_capture_opts.ifaces, interface_options, i);
+#ifdef HAVE_PCAP_REMOTE
+            if (interface_opts->auth_type == CAPTURE_AUTH_PWD) {
+                auth_str = g_strdup_printf("%s:%s", interface_opts->auth_username, interface_opts->auth_password);
             }
-#ifdef _WIN32
-            create_console();
-#endif /* _WIN32 */
-#if defined(HAVE_PCAP_CREATE)
-            if (device->monitor_mode_supported)
-                if_caps_queries |= CAPS_MONITOR_MODE;
 #endif
-            capture_opts_print_if_capabilities(caps, device->name, if_caps_queries);
-#ifdef _WIN32
-            destroy_console();
-#endif /* _WIN32 */
+            caps = capture_get_if_capabilities(interface_opts->name, interface_opts->monitor_mode,
+                                               auth_str, &err_str, &err_str_secondary, NULL);
+            g_free(auth_str);
+            if (caps == NULL) {
+                cmdarg_err("%s%s%s", err_str, err_str_secondary ? "\n" : "", err_str_secondary ? err_str_secondary : "");
+                g_free(err_str);
+                g_free(err_str_secondary);
+                ret_val = INVALID_CAPABILITY;
+                break;
+            }
+            ret_val = capture_opts_print_if_capabilities(caps, interface_opts,
+                                                         caps_queries);
             free_if_capabilities(caps);
+            if (ret_val != EXIT_SUCCESS) {
+                break;
             }
         }
-        ret_val = EXIT_SUCCESS;
+#ifdef _WIN32
+        destroy_console();
+#endif /* _WIN32 */
         goto clean_exit;
     }
 

@@ -20,6 +20,7 @@
 #include "rtp_audio_stream.h"
 
 #include <QMap>
+#include <QMultiHash>
 #include <QTreeWidgetItem>
 #include <QMetaType>
 #include <ui/qt/widgets/qcustomplot.h>
@@ -36,6 +37,17 @@ class RtpAudioStream;
 class QCPAxisTicker;
 class QCPAxisTickerDateTime;
 
+typedef enum {
+    save_audio_none,
+    save_audio_au,
+    save_audio_wav
+} save_audio_t;
+
+typedef enum {
+    save_payload_none,
+    save_payload_data
+} save_payload_t;
+
 class RtpPlayerDialog : public WiresharkDialog
 {
     Q_OBJECT
@@ -51,8 +63,7 @@ public:
      * @param button_box Caller's QDialogButtonBox.
      * @return The new "Play call" button.
      */
-    // XXX We might want to move this to qt_ui_utils.
-    static QPushButton *addPlayerButton(QDialogButtonBox *button_box);
+    static QPushButton *addPlayerButton(QDialogButtonBox *button_box, QDialog *dialog);
 
 #ifdef QT_MULTIMEDIA_LIB
     ~RtpPlayerDialog();
@@ -60,20 +71,34 @@ public:
     void accept();
     void reject();
 
-    /** Add an RTP stream to play.
-     * MUST be called before show().
-     * Requires src_addr, src_port, dest_addr, dest_port, ssrc, packet_count,
-     * setup_frame_number, and start_rel_time.
-     *
-     * @param rtpstream struct with rtpstream info
-     */
-    void addRtpStream(rtpstream_info_t *rtpstream);
     void setMarkers();
 
-public slots:
+    /** Replace/Add/Remove an RTP streams to play.
+     * Requires array of rtpstream_info_t.
+     * Each item must have filled items: src_addr, src_port, dest_addr,
+     *  dest_port, ssrc, packet_count, setup_frame_number, and start_rel_time.
+     *
+     * @param stream_infos struct with rtpstream info
+     */
+    void replaceRtpStreams(QVector<rtpstream_info_t *> stream_infos);
+    void addRtpStreams(QVector<rtpstream_info_t *> stream_infos);
+    void removeRtpStreams(QVector<rtpstream_info_t *> stream_infos);
 
 signals:
+    // Tells the packet list to redraw. An alternative might be to add a
+    // cf_packet_marked callback to file.[ch] but that's synchronous and
+    // might incur too much overhead.
+    void packetsMarked();
+    void updateFilter(QString filter, bool force = false);
     void goToPacket(int packet_num);
+    void rtpAnalysisDialogReplaceRtpStreams(QVector<rtpstream_id_t *> stream_infos);
+    void rtpAnalysisDialogAddRtpStreams(QVector<rtpstream_id_t *> stream_infos);
+    void rtpAnalysisDialogRemoveRtpStreams(QVector<rtpstream_id_t *> stream_infos);
+
+public slots:
+    void rtpAnalysisReplace();
+    void rtpAnalysisAdd();
+    void rtpAnalysisRemove();
 
 protected:
     virtual void showEvent(QShowEvent *);
@@ -81,7 +106,7 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event);
 
 private slots:
-    /** Retap the capture file, adding RTP packets that match the
+    /** Retap the capture file, reading RTP packets that match the
      * streams added using ::addRtpStream.
      */
     void retapPackets();
@@ -98,7 +123,7 @@ private slots:
     void updateHintLabel();
     void resetXAxis();
     void updateGraphs();
-    void playFinished(RtpAudioStream *stream);
+    void playFinished(RtpAudioStream *stream, QAudio::Error error);
 
     void setPlayPosition(double secs);
     void setPlaybackError(const QString playback_error);
@@ -129,6 +154,7 @@ private slots:
     void on_streamTreeWidget_itemSelectionChanged();
     void on_streamTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, const int column);
     void on_outputDeviceComboBox_currentIndexChanged(const QString &);
+    void on_outputAudioRate_currentIndexChanged(const QString &);
     void on_jitterSpinBox_valueChanged(double);
     void on_timingComboBox_currentIndexChanged(int);
     void on_todCheckBox_toggled(bool checked);
@@ -139,6 +165,12 @@ private slots:
     void outputNotify();
     void on_actionPlay_triggered();
     void on_actionStop_triggered();
+    void on_actionSaveAudioSyncStream_triggered();
+    void on_actionSaveAudioSyncFile_triggered();
+    void on_actionSavePayload_triggered();
+    void on_actionSelectInaudible_triggered();
+    void on_actionDeselectInaudible_triggered();
+    void on_actionPrepareFilter_triggered();
 
 private:
     Ui::RtpPlayerDialog *ui;
@@ -158,8 +190,16 @@ private:
     bool stereo_available_;
     QList<RtpAudioStream *> playing_streams_;
     QAudioOutput *marker_stream_;
+    quint32 marker_stream_requested_out_rate_;
     QTreeWidgetItem *last_ti_;
     bool listener_removed_;
+    QPushButton *inaudible_btn_;
+    QPushButton *analyze_btn_;
+    QPushButton *prepare_btn_;
+    QPushButton *export_btn_;
+    QMultiHash<guint, RtpAudioStream *> stream_hash_;
+    bool block_redraw_;
+    int lock_ui_;
 
 //    const QString streamKey(const rtpstream_info_t *rtpstream);
 //    const QString streamKey(const packet_info *pinfo, const struct _rtp_info *rtpinfo);
@@ -190,6 +230,23 @@ private:
     void highlightItem(QTreeWidgetItem *ti, bool highlight);
     void invertSelection();
     void handleGoToSetupPacket(QTreeWidgetItem *ti);
+    void addSingleRtpStream(rtpstream_info_t *rtpstream);
+    void removeRow(QTreeWidgetItem *ti);
+    void fillAudioRateMenu();
+    void cleanupMarkerStream();
+
+    qint64 saveAudioHeaderAU(QFile *save_file, int channels, unsigned audio_rate);
+    qint64 saveAudioHeaderWAV(QFile *save_file, int channels, unsigned audio_rate, qint64 samples);
+    bool writeAudioStreamsSamples(QFile *out_file, QVector<RtpAudioStream *> streams, bool swap_bytes);
+    save_audio_t selectFileAudioFormatAndName(QString *file_path);
+    save_payload_t selectFilePayloadFormatAndName(QString *file_path);
+    QVector<RtpAudioStream *>getSelectedAudibleNonmutedAudioStreams();
+    void saveAudio(bool sync_to_stream);
+    void savePayload();
+    void lockUI();
+    void unlockUI();
+    void selectInaudible(bool select);
+    QVector<rtpstream_id_t *>getSelectedRtpStreamIDs();
 
 #else // QT_MULTIMEDIA_LIB
 private:

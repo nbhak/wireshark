@@ -88,7 +88,7 @@ typedef struct {
   DOT11DECRYPT_KEY_ITEM used_key;
   guint keydata_len;
   guint8 *keydata;
-} proto_eapol_keydata_t;
+} proto_keydata_t;
 
 extern value_string_ext eap_type_vals_ext; /* from packet-eap.c */
 
@@ -326,6 +326,7 @@ typedef enum {
   IS_CTRL_GRANT_OR_GRANT_ACK_KEY,
   IS_S1G_KEY,
   DECRYPTED_EAPOL_KEY,
+  DECRYPTED_GTK_KEY,
   PACKET_DATA_KEY,
   ASSOC_COUNTER_KEY,
   STA_KEY,
@@ -357,6 +358,7 @@ typedef enum {
   RSNE_TAG_KEY,
   RDE_TAG_KEY,
   GTK_SUBELEM_KEY_LEN_KEY,
+  PASN_DATA_KEY,
 } wlan_proto_key_t;
 
 /* ************************************************************************* */
@@ -731,7 +733,7 @@ static const value_string tag_num_vals_eid_ext[] = {
   { ETAG_FILS_HLP_CONTAINER,                  "FILS HLP Container" },
   { ETAG_FILS_IP_ADDRESS_ASSIGN,              "FILS IP Address Assignment" },
   { ETAG_KEY_DELIVERY,                        "Key Delivery" },
-  { ETAG_FILS_WRAPPED_DATA,                   "FILS Wrapped Data" },
+  { ETAG_FILS_WRAPPED_DATA,                   "Wrapped Data" },
   { ETAG_FTM_SYNC_INFO,                       "FTM Synchronization Information" },
   { ETAG_EXTENDED_REQUEST,                    "Extended Request" },
   { ETAG_ESTIMATED_SERVICE_PARAM,             "Estimated Service Parameters" },
@@ -3775,6 +3777,41 @@ static int hf_ieee80211_he_trigger_ul_dcm = -1;
 static int hf_ieee80211_he_trigger_ul_target_rssi = -1;
 static int hf_ieee80211_he_trigger_user_reserved = -1;
 static int hf_ieee80211_he_trigger_dep_basic_user_info = -1;
+static int hf_ieee80211_he_trigger_ranging_common_info_1 = -1;
+static int hf_ieee80211_he_trigger_ranging_common_info_2 = -1;
+static int hf_ieee80211_ranging_trigger_subtype1 = -1;
+static int hf_ieee80211_ranging_trigger_reserved1 = -1;
+static int hf_ieee80211_ranging_trigger_token = -1;
+static int hf_ieee80211_ranging_trigger_subtype2 = -1;
+static int hf_ieee80211_ranging_trigger_reserved2 = -1;
+static int hf_ieee80211_ranging_trigger_sounding_dialog_token = -1;
+static int hf_ieee80211_he_trigger_ranging_trigger_poll_rpt = -1;
+static int hf_ieee80211_ranging_pol_rpt_aid12_rsid12 = -1;
+static int hf_ieee80211_ranging_pol_rpt_ru_alloc_region = -1;
+static int hf_ieee80211_ranging_pol_rpt_ru_alloc = -1;
+static int hf_ieee80211_ranging_pol_rpt_ul_fec_coding_type = -1;
+static int hf_ieee80211_ranging_pol_rpt_ulmcs = -1;
+static int hf_ieee80211_ranging_pol_rpt_uldcm = -1;
+static int hf_ieee80211_ranging_pol_rpt_ss_alloc = -1;
+static int hf_ieee80211_ranging_pol_rpt_ul_target_rssi = -1;
+static int hf_ieee80211_ranging_pol_rpt_reserved = -1;
+static int hf_ieee80211_he_trigger_ranging_trigger_sounding = -1;
+static int hf_ieee80211_ranging_sounding_aid12_rsid12 = -1;
+static int hf_ieee80211_ranging_sounding_reserved1 = -1;
+static int hf_ieee80211_ranging_sounding_i2r_rep = -1;
+static int hf_ieee80211_ranging_sounding_reserved2 = -1;
+static int hf_ieee80211_ranging_sounding_ss_allocation = -1;
+static int hf_ieee80211_ranging_sounding_ul_target_rssi = -1;
+static int hf_ieee80211_ranging_sounding_reserved3 = -1;
+static int hf_ieee80211_he_trigger_ranging_trigger_sec_sound = -1;
+static int hf_ieee80211_ranging_sec_sound_aid12_rsid12 = -1;
+static int hf_ieee80211_ranging_sec_sound_reserved1 = -1;
+static int hf_ieee80211_ranging_sec_sound_i2r_rep = -1;
+static int hf_ieee80211_ranging_sec_sound_reserved2 = -1;
+static int hf_ieee80211_ranging_sec_sound_ss_allocation = -1;
+static int hf_ieee80211_ranging_sec_sound_ul_target_rssi = -1;
+static int hf_ieee80211_ranging_sec_sound_reserved3 = -1;
+static int hf_ieee80211_he_trigger_ranging_user_info_sac = -1;
 static int hf_ieee80211_he_ndp_annc_token = -1;
 static int hf_ieee80211_he_ndp_annc_sta = -1;
 static int hf_ieee80211_he_ndp_sounding_dialog_token_number = -1;
@@ -4223,6 +4260,54 @@ static int hf_ieee80211_tag_ranging_ntb_r2i_tx_power = -1;
 static int hf_ieee80211_tag_ranging_ntb_i2r_tx_power = -1;
 static int hf_ieee80211_tag_ranging_ntb_reserved2 = -1;
 
+/* az: FTM Ranging Specific TB subelement */
+static int hf_ieee80211_tag_ranging_aid_rsid = -1;
+static int hf_ieee80211_tag_ranging_response = -1;
+static int hf_ieee80211_tag_ranging_trigger_frame_paddur = -1;
+static int hf_ieee80211_tag_ranging_passive_tb_ranging = -1;
+static int hf_ieee80211_tag_ranging_max_sess_exp = -1;
+static int hf_ieee80211_tag_ranging_bss_color_info = -1;
+
+/* az: PASN subelements etc. */
+static int hf_ieee80211_tag_pasn_parameters_control = -1;
+static int hf_ieee80211_tag_pasn_params_comeback_info_present = -1;
+static int hf_ieee80211_tag_pasn_params_group_and_key_present = -1;
+static int hf_ieee80211_tag_pasn_parameters_reserved = -1;
+static int hf_ieee80211_tag_pasn_parameters_wrapped_fmt = -1;
+static int hf_ieee80211_tag_pasn_comeback_after = -1;
+static int hf_ieee80211_tag_pasn_cookie_length = -1;
+static int hf_ieee80211_tag_pasn_cookie = -1;
+static int hf_ieee80211_tag_pasn_finite_cyclic_group_id = -1;
+static int hf_ieee80211_tag_pasn_ephemeral_public_key_len = -1;
+static int hf_ieee80211_tag_pasn_ephemeral_public_key = -1;
+static int hf_ieee80211_pasn_auth1_frame_len = -1;
+static int hf_ieee80211_pasn_auth2_frame_len = -1;
+
+/* az: Secure LTF Parameters */
+static int hf_ieee80211_tag_secure_ltf_params_counter = -1;
+static int hf_ieee80211_tag_secure_ltf_generation_sac = -1;
+static int hf_ieee80211_tag_secure_ltf_management_sac = -1;
+static int hf_ieee80211_tag_secure_ltf_result_ltf_ofs = -1;
+
+/* az: ista and rsta availability details */
+static int hf_ieee80211_ftm_ista_availability_count = -1;
+static int hf_ieee80211_ftm_ista_availability_reserved = -1;
+static int hf_ieee80211_ftm_ista_avail_bits = -1;
+static int hf_ieee80211_ftm_ista_avail_pad = -1;
+
+static int hf_ieee80211_ftm_rsta_count = -1;
+static int hf_ieee80211_ftm_rsta_partial_tsf_timer1 = -1;
+static int hf_ieee80211_ftm_rsta_duration1 = -1;
+static int hf_ieee80211_ftm_rsta_passive_tb_ranging_avail_win1 = -1;
+static int hf_ieee80211_ftm_rsta_periodicity1 = -1;
+static int hf_ieee80211_ftm_rsta_partial_tsf_timer = -1;
+static int hf_ieee80211_ftm_rsta_duration = -1;
+static int hf_ieee80211_ftm_rsta_passive_tb_ranging_avail_win = -1;
+static int hf_ieee80211_ftm_rsta_periodicity = -1;
+static int hf_ieee80211_ftm_rsta_passive_tb_ranging_params = -1;
+static int hf_ieee80211_ftm_rsta_avail_subfield_short = -1;
+static int hf_ieee80211_ftm_rsta_avail_subfield_long = -1;
+
 static int hf_ieee80211_ff_ant_selection = -1;
 static int hf_ieee80211_ff_ant_selection_0 = -1;
 static int hf_ieee80211_ff_ant_selection_1 = -1;
@@ -4618,6 +4703,7 @@ static int hf_ieee80211_rnr_bss_parameters_b4 = -1;
 static int hf_ieee80211_rnr_bss_parameters_b5 = -1;
 static int hf_ieee80211_rnr_bss_parameters_b6 = -1;
 static int hf_ieee80211_rnr_bss_parameters_b7 = -1;
+static int hf_ieee80211_rnr_20_mhz_psd = -1;
 
 static int hf_ieee80211_ampduparam = -1;
 static int hf_ieee80211_ampduparam_vs = -1;
@@ -5405,6 +5491,36 @@ static int hf_ieee80211_vht_ndp_annc_sta_info_feedback_type = -1;
 static int hf_ieee80211_vht_ndp_annc_sta_info_nc_index = -1;
 static int hf_ieee80211_vht_ndp_annc_sta_info_reserved = -1;
 
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008 = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_aid11 = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_ltf_offset = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_r2i_n_sts = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_r2i_rep = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_i2r_n_sts = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_reserved1 = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_disambiguation = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_i2r_rep = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_reserved2 = -1;
+
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043 = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043_aid11 = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043_sac = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043_disambiguation = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043_reserved = -1;
+
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044 = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_aid11 = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_partial_tsf = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_disambiguation = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_reserved = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_token = -1;
+
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045 = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_aid11 = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_i2r_ndp_tx_power = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_r2i_ndp_target_rssi = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_disambiguation = -1;
+static int hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_reserved = -1;
 
 static int hf_ieee80211_ff_vht_action = -1;
 static int hf_ieee80211_ff_vht_mimo_cntrl = -1;
@@ -5535,6 +5651,7 @@ static int hf_ieee80211_tag_ft_subelem_gtk_key_id = -1;
 static int hf_ieee80211_tag_ft_subelem_gtk_key_length = -1;
 static int hf_ieee80211_tag_ft_subelem_gtk_rsc = -1;
 static int hf_ieee80211_tag_ft_subelem_gtk_key = -1;
+static int hf_ieee80211_tag_ft_subelem_gtk_key_encrypted = -1;
 static int hf_ieee80211_tag_ft_subelem_r0kh_id = -1;
 static int hf_ieee80211_tag_ft_subelem_igtk_key_id = -1;
 static int hf_ieee80211_tag_ft_subelem_igtk_ipn = -1;
@@ -6749,7 +6866,6 @@ static int hf_ieee80211_ext_tag_data = -1;
 
 static int hf_ieee80211_fils_session = -1;
 static int hf_ieee80211_fils_encrypted_data = -1;
-static int hf_ieee80211_fils_wrapped_data = -1;
 static int hf_ieee80211_fils_nonce = -1;
 
 /* wfa 60g ie tree */
@@ -7221,6 +7337,8 @@ static gint ett_vht_ndp_annc = -1;
 static gint ett_vht_ndp_annc_sta_info_tree = -1;
 static gint ett_vht_ndp_annc_sta_list = -1;
 
+static gint ett_vht_ranging_annc = -1;
+
 static gint ett_ff_he_action = -1;
 static gint ett_ff_protected_he_action = -1;
 static gint ett_ff_he_mimo_control = -1;
@@ -7249,6 +7367,14 @@ static gint ett_ff_ftm_tod_err1 = -1;
 static gint ett_ff_ftm_toa_err1 = -1;
 static gint ett_tag_ranging = -1;
 static gint ett_tag_ranging_ntb = -1;
+
+static gint ett_rsta_avail_tree = -1;
+static gint ett_rsta_avail_subfield = -1;
+
+static gint ett_pasn_parameters = -1;
+static gint ett_pasn_comeback_tree = -1;
+
+static gint ett_pasn_auth_frame = -1;
 
 static gint ett_tag_measure_request_mode_tree = -1;
 static gint ett_tag_measure_request_type_tree = -1;
@@ -7299,6 +7425,8 @@ static gint ett_tag_neighbor_report_bssid_info_tree = -1;
 static gint ett_tag_neighbor_report_bssid_info_capability_tree = -1;
 static gint ett_tag_neighbor_report_subelement_tree = -1;
 static gint ett_tag_neighbor_report_sub_tag_tree = -1;
+
+static gint ett_tag_rnr_tbtt_tree = -1;
 
 static gint ett_tag_wapi_param_set_akm_tree = -1;
 static gint ett_tag_wapi_param_set_ucast_tree = -1;
@@ -7514,6 +7642,9 @@ static gint ett_he_operation_6ghz = -1;
 static gint ett_he_operation_6ghz_control = -1;
 static gint ett_he_mu_edca_param = -1;
 static gint ett_he_trigger_common_info = -1;
+static gint ett_he_trigger_ranging = -1;
+static gint ett_he_trigger_ranging_poll = -1;
+static gint ett_he_trigger_packet_extension = -1;
 static gint ett_he_trigger_base_common_info = -1;
 static gint ett_he_trigger_bar_ctrl = -1;
 static gint ett_he_trigger_bar_info = -1;
@@ -8403,6 +8534,27 @@ get_tagged_parameter_tree(proto_tree * tree, tvbuff_t *tvb, int start, int size)
   return proto_item_add_subtree(tagged_fields, ett_tagged_parameters);
 }
 
+static void
+add_ptk_analysis(tvbuff_t *tvb, proto_tree *tree, DOT11DECRYPT_KEY_ITEM *used_key)
+{
+  if (!used_key) {
+    return;
+  }
+  const guint8 *key = NULL;
+  proto_item *ti;
+  char buf[SHORT_STR];
+  int len = Dot11DecryptGetKCK(used_key, &key);
+  bytes_to_hexstr(buf, key, len);
+  buf[2 * len] = '\0';
+  ti = proto_tree_add_string(tree, hf_ieee80211_fc_analysis_kck, tvb, 0, 0, buf);
+  proto_item_set_generated(ti);
+
+  len = Dot11DecryptGetKEK(used_key, &key);
+  bytes_to_hexstr(buf, key, len);
+  buf[2 * len] = '\0';
+  ti = proto_tree_add_string(tree, hf_ieee80211_fc_analysis_kek, tvb, 0, 0, buf);
+  proto_item_set_generated(ti);
+}
 
 static int
 dissect_vendor_action_marvell(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void *data _U_)
@@ -12394,6 +12546,211 @@ add_ff_auth_fils(proto_tree *tree, tvbuff_t *tvb, packet_info *pinfo _U_,
   return offset;
 }
 
+/*
+ * We handle different elements depending on whether the sequence number is
+ * 1, 2 or 3.
+ */
+typedef struct ieee80211_pasn_data {
+  guint pasn_seq;
+  guint pasn_status_code;
+} ieee80211_pasn_data_t;
+
+static ieee80211_pasn_data_t*
+create_pasn_data(packet_info *pinfo, guint seq, guint status)
+{
+  ieee80211_pasn_data_t *pasn_data = NULL;
+
+  pasn_data = wmem_new(pinfo->pool, ieee80211_pasn_data_t);
+
+  if(pasn_data) {
+    p_add_proto_data(pinfo->pool, pinfo, proto_wlan, PASN_DATA_KEY, pasn_data);
+    pasn_data->pasn_seq = seq;
+    pasn_data->pasn_status_code = status;
+  }
+
+  return pasn_data;
+}
+
+static guint
+add_ff_auth_pasn(proto_tree *tree, tvbuff_t *tvb, packet_info *pinfo _U_,
+                 guint offset)
+{
+  guint seq, status_code;
+  ieee80211_pasn_data_t *pasn_data = NULL;
+  guint8 wrapped_fmt = 0;
+
+  seq = tvb_get_letohs(tvb, 2);
+  status_code = tvb_get_letohs(tvb, 4);
+
+  pasn_data = create_pasn_data(pinfo, seq, status_code);
+  if (!pasn_data) {
+    /* Leave it undissected if we cannot get memory. */
+    return offset + tvb_captured_length_remaining(tvb, offset);
+  }
+
+  if (seq == 1) {
+    /*
+     * Contains RSN Info,
+     * PASN field,
+     * Wrapped Data may be present if the PASN element says so,
+     * RSNXE may be present
+     * Timeout Interval element may be present
+     * Fragment element may be present if it was fragmented.
+     */
+    offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+    /* Sigh, reach into the PASN element */
+    wrapped_fmt = tvb_get_guint8(tvb, offset + 4);
+    offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+    if (wrapped_fmt > 0 && wrapped_fmt <= 3) {
+      offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+    }
+    /* How do we check if this is there? */
+    offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+    /* Do we have any more of the possible fields */
+  } else if (seq == 2) {
+    if (status_code != 0) {
+      offset += tvb_captured_length_remaining(tvb, offset);
+      return offset;
+    }
+    /*
+     * RSN element is present.
+     * PASN element is present if status == 0.
+     * Wrapped Data element present if the PASN element says so.
+     * ...
+     */
+    offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+
+    if (status_code == 0) {
+      wrapped_fmt = tvb_get_guint8(tvb, offset + 4);
+      offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+      if (wrapped_fmt > 0 && wrapped_fmt <= 3) {
+        offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+      }
+    }
+    offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+    offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+  } else if (seq == 3) {
+    /*
+     * Contains PASN element if status == 0
+     * Contains Wrapped Data element if PASN element says so and status is 0.
+     * Contains MC element
+     * May contain fragment elements.
+     */
+    if (status_code == 0) {
+      wrapped_fmt = tvb_get_guint8(tvb, offset + 4);
+      offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+      if (wrapped_fmt > 0 && wrapped_fmt <= 3) {
+        offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+      }
+    }
+    offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+  }
+
+  offset += tvb_captured_length_remaining(tvb, offset);
+
+  return offset;
+}
+
+/*
+ * Handle an Auth Frame. We need to be able to call this from several places.
+ *
+ * We should also handle the different auth types more correctly.
+ */
+static int
+dissect_auth_frame(proto_tree *tree, packet_info *pinfo, tvbuff_t *tvb)
+{
+  int offset = 0;
+  guint16 auth_algorithm = tvb_get_letohs(tvb, offset);
+
+  add_ff_auth_alg(tree, tvb, pinfo, offset);
+  offset += 2;
+
+  add_ff_auth_trans_seq(tree, tvb, pinfo, offset);
+  offset += 2;
+
+  add_ff_status_code(tree, tvb, pinfo, offset);
+  offset += 2;
+
+  switch (auth_algorithm) {
+  case AUTH_ALG_SAE:
+    offset = add_ff_auth_sae(tree, tvb, pinfo, offset);
+    break;
+  case AUTH_ALG_FILS_PK:
+  case  AUTH_ALG_FILS_SK_WITH_PFS:
+    offset = add_ff_auth_fils(tree, tvb, pinfo, offset);
+    break;
+  case AUTH_ALG_PASN:
+    offset = add_ff_auth_pasn(tree, tvb, pinfo, offset);
+    break;
+  }
+
+  return offset;
+}
+
+/*
+ * If it is PASN wrapped data, handle it correctly, else defer to fils
+ * wrapped data.
+ */
+static void
+dissect_wrapped_data(proto_tree *tree, packet_info *pinfo, tvbuff_t *tvb,
+                     int offset, guint8 ext_tag_len _U_)
+{
+  ieee80211_pasn_data_t *pasn_data =
+    (ieee80211_pasn_data_t*)p_get_proto_data(pinfo->pool, pinfo, proto_wlan,
+                                             PASN_DATA_KEY);
+
+  if (pasn_data) {
+    proto_tree *auth_tree = NULL;
+    proto_item *ai = NULL;
+    guint16 frame_len = 0;
+    tvbuff_t *new_tvb = NULL;
+
+    switch (pasn_data->pasn_seq) {
+    case 1:
+      auth_tree = proto_tree_add_subtree(tree, tvb, offset, -1,
+                                         ett_pasn_auth_frame, &ai,
+                                         "Authentication Frame");
+      new_tvb = tvb_new_subset_remaining(tvb, offset);
+      offset = dissect_auth_frame(auth_tree, pinfo, new_tvb);
+      proto_item_set_len(ai, offset); /* This is correct */
+      break;
+
+    case 2:
+      /* This has two auth frames in it. */
+      frame_len = tvb_get_letohs(tvb, offset);
+      proto_tree_add_item(tree, hf_ieee80211_pasn_auth1_frame_len, tvb, offset,
+                          2, ENC_LITTLE_ENDIAN);
+      offset += 2;
+      auth_tree = proto_tree_add_subtree(tree, tvb, offset, frame_len,
+                                         ett_pasn_auth_frame, NULL,
+                                         "Authentication Frame 1");
+      new_tvb = tvb_new_subset_length(tvb, offset, frame_len);
+      offset += dissect_auth_frame(auth_tree, pinfo, new_tvb);
+
+      /* Second frame */
+      frame_len = tvb_get_letohs(tvb, offset);
+      proto_tree_add_item(tree, hf_ieee80211_pasn_auth2_frame_len, tvb, offset,
+                          2, ENC_LITTLE_ENDIAN);
+      offset += 2;
+      auth_tree = proto_tree_add_subtree(tree, tvb, offset, frame_len,
+                                         ett_pasn_auth_frame, NULL,
+                                         "Authentication Frame 2");
+      new_tvb = tvb_new_subset_length(tvb, offset, frame_len);
+      dissect_auth_frame(auth_tree, pinfo, new_tvb);
+      break;
+
+    case 3:
+      auth_tree = proto_tree_add_subtree(tree, tvb, offset, -1,
+                                         ett_pasn_auth_frame, &ai,
+                                         "Authentication Frame");
+      new_tvb = tvb_new_subset_remaining(tvb, offset);
+      offset = dissect_auth_frame(auth_tree, pinfo, new_tvb);
+      proto_item_set_len(ai, offset);
+      break;
+    }
+  }
+}
+
 static guint
 wnm_bss_trans_mgmt_query(proto_tree *tree, tvbuff_t *tvb, packet_info *pinfo, int offset)
 {
@@ -15240,6 +15597,9 @@ static const value_string ieee80211_rsn_keymgmt_vals[] = {
   {16, "FT over FILS (SHA256 and AES-SIV-256)" },
   {17, "FT over FILS (SHA384 and AES-SIV-512)" },
   {18, "Opportunistic Wireless Encryption"},
+  {19, "FT using PSK (SHA384)"},
+  {20, "PSK (SHA384)"},
+  {21, "PASN"},
   {0, NULL}
 };
 
@@ -15473,6 +15833,14 @@ static const val64_string ieee80211_ranging_fmt_bw_vals[] = {
   { 4, "HE 160 MHz (two separate RF LOs)" },
   { 5, "HE 160 MHz (single RF LO)" },
   /* values 6-63 reserved */
+  { 0, NULL }
+};
+
+static const val64_string ieee80211_ranging_ltf_total_vals[] = {
+  { 0, "4 LTFs" },
+  { 1, "8 LTFs" },
+  { 2, "16 LTFs" },
+  { 3, "No max LTFs specified" },
   { 0, NULL }
 };
 
@@ -18412,6 +18780,7 @@ dissect_fast_bss_transition(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree,
     proto_item *ti;
     proto_tree *subtree;
     const gchar *subtree_name;
+    proto_keydata_t *proto;
 
     id = tvb_get_guint8(tvb, offset);
     len = tvb_get_guint8(tvb, offset + 1);
@@ -18463,8 +18832,21 @@ dissect_fast_bss_transition(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree,
         break;
       save_proto_data_value(pinfo, s_end - offset, GTK_LEN_KEY);
       save_proto_data(tvb, pinfo, offset, s_end - offset, GTK_KEY);
-      proto_tree_add_item(subtree, hf_ieee80211_tag_ft_subelem_gtk_key,
-                          tvb, offset, s_end - offset, ENC_NA);
+
+      proto = (proto_keydata_t *)
+        p_get_proto_data(wmem_file_scope(), pinfo, proto_wlan, DECRYPTED_GTK_KEY);
+      if (proto) {
+        guint keydata_len = proto->keydata_len;
+        tvbuff_t *next_tvb = tvb_new_child_real_data(tvb, proto->keydata,
+                                                    keydata_len, keydata_len);
+        add_new_data_source(pinfo, next_tvb, "Decrypted GTK");
+        proto_tree_add_item(subtree, hf_ieee80211_tag_ft_subelem_gtk_key,
+                            next_tvb, 0, keydata_len, ENC_NA);
+        add_ptk_analysis(tvb, subtree, &proto->used_key);
+      } else {
+        proto_tree_add_item(subtree, hf_ieee80211_tag_ft_subelem_gtk_key_encrypted,
+                            tvb, offset, s_end - offset, ENC_NA);
+      }
       break;
     case 3:
       save_proto_data(tvb, pinfo, offset, len, FTE_R0KH_ID_KEY);
@@ -18979,8 +19361,8 @@ dissect_operating_mode_notification(tvbuff_t *tvb, packet_info *pinfo _U_, proto
 static int
 dissect_reduced_neighbor_report(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, void* data _U_)
 {
-  int offset = 0;
-  guint8 tbbt_length;
+  int offset = 0, count;
+  guint8 tbbt_length, tbtt_count;
   static int * const ieee80211_rnr_tbtt_information_header[] = {
     &hf_ieee80211_rnr_tbtt_information_field_type,
     &hf_ieee80211_rnr_tbtt_information_filtered_neighbor_ap,
@@ -19001,11 +19383,13 @@ dissect_reduced_neighbor_report(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tre
     &hf_ieee80211_rnr_bss_parameters_b7,
     NULL
   };
+  proto_tree *tbtt_subtree;
 
   /* TBTT Information Header */
   proto_tree_add_bitmask_with_flags(tree, tvb, offset, hf_ieee80211_rnr_tbtt_information_field_header,
                                     ett_rnr_tbtt_information_tree, ieee80211_rnr_tbtt_information_header,
                                     ENC_LITTLE_ENDIAN, BMT_NO_APPEND);
+  tbtt_count = tvb_get_guint8(tvb, offset) >> 4;
   tbbt_length = tvb_get_guint8(tvb, offset+1);
   offset += 2;
 
@@ -19015,27 +19399,40 @@ dissect_reduced_neighbor_report(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tre
   proto_tree_add_item(tree, hf_ieee80211_rnr_channel_number, tvb, offset, 1, ENC_LITTLE_ENDIAN);
   offset += 1;
 
-  proto_tree_add_item(tree, hf_ieee80211_rnr_neighbor_ap_tbtt_offset, tvb, offset, 1, ENC_LITTLE_ENDIAN);
-  offset += 1;
+  count = tbtt_count;
+  while (count >= 0) {
+    tbtt_subtree = proto_tree_add_subtree_format(tree, tvb, offset, tbbt_length, ett_tag_rnr_tbtt_tree, NULL, "TBTT %d:", tbtt_count - count);
 
-  /* BSSID */
-  if(tbbt_length == 7 || tbbt_length == 8 || tbbt_length >= 11){
-    proto_tree_add_item(tree, hf_ieee80211_rnr_bssid, tvb, offset, 6, ENC_NA);
-    offset += 6;
-  }
-
-  /* Short SSID */
-  if(tbbt_length == 5 || tbbt_length == 6 || tbbt_length >= 11){
-    proto_tree_add_item(tree, hf_ieee80211_rnr_short_ssid, tvb, offset, 4, ENC_NA);
-    offset += 4;
-  }
-
-  /* BSS Parameters */
-  if(tbbt_length == 2 || tbbt_length == 6 || tbbt_length == 8 || tbbt_length >= 12){
-    proto_tree_add_bitmask_with_flags(tree, tvb, offset, hf_ieee80211_rnr_bss_parameters,
-                                      ett_rnr_bss_parameters, ieee80211_rnr_bss_parameters,
-                                      ENC_LITTLE_ENDIAN, BMT_NO_APPEND);
+    proto_tree_add_item(tbtt_subtree, hf_ieee80211_rnr_neighbor_ap_tbtt_offset, tvb, offset, 1, ENC_LITTLE_ENDIAN);
     offset += 1;
+
+    /* BSSID */
+    if(tbbt_length == 7 || tbbt_length == 8 || tbbt_length >= 11){
+      proto_tree_add_item(tbtt_subtree, hf_ieee80211_rnr_bssid, tvb, offset, 6, ENC_NA);
+      offset += 6;
+    }
+
+    /* Short SSID */
+    if(tbbt_length == 5 || tbbt_length == 6 || tbbt_length >= 11){
+      proto_tree_add_item(tbtt_subtree, hf_ieee80211_rnr_short_ssid, tvb, offset, 4, ENC_NA);
+      offset += 4;
+    }
+
+    /* BSS Parameters */
+    if(tbbt_length == 2 || tbbt_length == 6 || tbbt_length == 8 || tbbt_length >= 12){
+      proto_tree_add_bitmask_with_flags(tbtt_subtree, tvb, offset, hf_ieee80211_rnr_bss_parameters,
+                                        ett_rnr_bss_parameters, ieee80211_rnr_bss_parameters,
+                                        ENC_LITTLE_ENDIAN, BMT_NO_APPEND);
+      offset += 1;
+    }
+
+    /* 20 MHz PSD */
+    if(tbbt_length == 9 || tbbt_length == 13){
+      proto_tree_add_item(tbtt_subtree, hf_ieee80211_rnr_20_mhz_psd, tvb, offset, 1, ENC_NA);
+      offset += 1;
+    }
+
+    count--;
   }
 
   return offset;
@@ -22654,6 +23051,266 @@ dissect_he_6ghz_band_capabilities(tvbuff_t *tvb, packet_info *pinfo, proto_tree 
 }
 
 static void
+dissect_secure_ltf_parameters(tvbuff_t *tvb, packet_info *pinfo _U_,
+                              proto_tree *tree, int offset, int len _U_)
+{
+  proto_tree_add_item(tree, hf_ieee80211_tag_secure_ltf_params_counter, tvb,
+                      offset, 6, ENC_LITTLE_ENDIAN);
+  offset += 6;
+
+  proto_tree_add_item(tree, hf_ieee80211_tag_secure_ltf_generation_sac, tvb,
+                      offset, 2, ENC_LITTLE_ENDIAN);
+  offset += 2;
+
+  proto_tree_add_item(tree, hf_ieee80211_tag_secure_ltf_management_sac, tvb,
+                      offset, 2, ENC_LITTLE_ENDIAN);
+  offset += 2;
+
+  proto_tree_add_item(tree, hf_ieee80211_tag_secure_ltf_result_ltf_ofs, tvb,
+                      offset, 1, ENC_NA);
+}
+
+static void
+dissect_ista_availability_window(tvbuff_t *tvb, packet_info *pinfo _U_, proto_tree *tree, int offset, int len)
+{
+  guint16 count = tvb_get_letohs(tvb, offset) & 0x1FF;
+  char avail_string[513];
+  char pad_string[8];
+  int i = 0, j;
+  int avail_bits_offset;
+  gint8 bits;
+
+  /* These are at the same level as the avail bits */
+  proto_tree_add_item(tree, hf_ieee80211_ftm_ista_availability_count,
+                      tvb, offset, 2, ENC_LITTLE_ENDIAN);
+  proto_tree_add_item(tree, hf_ieee80211_ftm_ista_availability_reserved,
+                      tvb, offset, 2, ENC_LITTLE_ENDIAN);
+  offset += 2;
+
+  avail_bits_offset = offset;
+
+  /* Now, extract count  bits and set up the string 8-bits at a time */
+  for (i = 1; i <= (count / 8); i++) {
+    bits = tvb_get_guint8(tvb, offset);
+
+    for (j = 0; j < 8; j++) {
+      avail_string[(i - 1) + j] = (bits & 0x01) ? '1' : '0';
+      bits = bits >> 1;
+    }
+
+    offset += 1;
+  }
+
+  avail_string[i * 8] = 0;
+
+  if (count % 8) {
+    /* Deal with the remaining bits */
+    bits = tvb_get_guint8(tvb, offset);
+
+    for (j = (i - 1) * 8; j < count; j++) {
+      avail_string[j] = (bits & 0x01) ? '1' : '0';
+      bits = bits >> 1;
+    }
+
+    avail_string[j] = 0;
+
+    /* Deal with the padding */
+    for (j = 0; j < 8 - (count % 8); j++) {
+      pad_string[j] = (bits & 0x01) ? '1' : '0';
+      bits = bits >> 1;
+    }
+
+    pad_string[j] = 0;
+  }
+
+  proto_tree_add_string(tree, hf_ieee80211_ftm_ista_avail_bits, tvb,
+                        avail_bits_offset, (count + 7) / 8, avail_string);
+
+  if (((len - 2) * 8) != count) {
+    proto_tree_add_string(tree, hf_ieee80211_ftm_ista_avail_pad, tvb,
+                          offset, 1, pad_string);
+  }
+}
+
+static int * const rsta_availability_subfield_hdr1[] = {
+  &hf_ieee80211_ftm_rsta_partial_tsf_timer1,
+  &hf_ieee80211_ftm_rsta_duration1,
+  &hf_ieee80211_ftm_rsta_passive_tb_ranging_avail_win1,
+  &hf_ieee80211_ftm_rsta_periodicity1,
+  NULL
+};
+
+static int * const rsta_availability_subfield_hdr2[] = {
+  &hf_ieee80211_ftm_rsta_partial_tsf_timer,
+  &hf_ieee80211_ftm_rsta_duration,
+  &hf_ieee80211_ftm_rsta_passive_tb_ranging_avail_win,
+  &hf_ieee80211_ftm_rsta_periodicity,
+  &hf_ieee80211_ftm_rsta_passive_tb_ranging_params,
+  NULL
+};
+
+static void
+dissect_rsta_availability_window(tvbuff_t *tvb, packet_info *pinfo _U_,
+                                 proto_tree *tree, int offset, int len _U_)
+{
+  guint8 count = tvb_get_guint8(tvb, offset);
+  int i;
+
+  proto_tree_add_item(tree, hf_ieee80211_ftm_rsta_count, tvb, offset, 1,
+                      ENC_NA);
+  offset += 1;
+
+  for (i = 0; i < count; i++) {
+    proto_tree *subfield_tree = NULL;
+    gboolean has_passive_ranging_params =
+                (tvb_get_letohl(tvb, offset) >> 23) & 1;
+
+    subfield_tree = proto_tree_add_subtree_format(tree, tvb, offset,
+                                           has_passive_ranging_params ? 5 : 4,
+                                           ett_rsta_avail_tree, NULL,
+                                           "Availability Window Information %d",
+                                           i);
+    if (has_passive_ranging_params) {
+      proto_tree_add_bitmask(subfield_tree, tvb, offset,
+                             hf_ieee80211_ftm_rsta_avail_subfield_long,
+                             ett_rsta_avail_subfield,
+                             rsta_availability_subfield_hdr2,
+                             ENC_LITTLE_ENDIAN);
+      offset += 5;
+    } else {
+      proto_tree_add_bitmask(subfield_tree, tvb, offset,
+                             hf_ieee80211_ftm_rsta_avail_subfield_short,
+                             ett_rsta_avail_subfield,
+                             rsta_availability_subfield_hdr1,
+                             ENC_LITTLE_ENDIAN);
+      offset += 4;
+    }
+  }
+}
+
+/*
+ * "Comeback after subfield shall not be present (ie, zero octets) in PASN
+ * authentication frames from a non-AP STA."
+ *
+ * Attempt to figure out if the Comeback After field is present.
+ */
+#define PASN_COMEBACK_INFO_PRESENT 0x01
+#define PASN_GROUP_KEY_PRESENT     0x02
+
+static gboolean
+has_comeback_after(guint8 flags, tvbuff_t *tvb, int offset, int len _U_)
+{
+  int tvb_left = tvb_captured_length_remaining(tvb, offset);
+  gboolean comeback_after = FALSE;
+  //int cookie_len = 0;
+  int fixed_len = 0;
+
+  if (flags & PASN_GROUP_KEY_PRESENT) { /* Group and Key present */
+    fixed_len += 2;
+  }
+
+  /*
+   * If there is a comeback field and the comback_after is present ...
+   */
+  if (flags & 0x01) {
+        /* Check if the comeback_after field is there? */
+        if (tvb_get_letohs(tvb, offset) <= (tvb_left - fixed_len)) {
+                comeback_after = TRUE;
+        }
+  }
+
+  return comeback_after;
+}
+
+static int * const pasn_params_fields[] = {
+  &hf_ieee80211_tag_pasn_params_comeback_info_present,
+  &hf_ieee80211_tag_pasn_params_group_and_key_present,
+  &hf_ieee80211_tag_pasn_parameters_reserved,
+  NULL
+};
+
+static const range_string wrapped_data_fmt_rvals[] = {
+  { 0, 0, "No wrapped data" },
+  { 1, 1, "Fast BSS Transition Wrapped Data" },
+  { 2, 2, "FILS Shared Key authentication without PFS Wrapped Data" },
+  { 3, 3, "SAE Wrapped Data" },
+  { 4, 255, "Reserved" },
+  { 0, 0, NULL }
+};
+
+static void
+dissect_pasn_parameters(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, int offset, int len)
+{
+  int public_key_len = 0;
+  guint pasn_control = tvb_get_guint8(tvb, offset);
+
+  if (len < 2) {
+    expert_add_info_format(pinfo, tree, &ei_ieee80211_tag_length,
+                           "PASN Parameters must be at least 2 octets long");
+    return;
+  }
+
+  proto_tree_add_bitmask_with_flags(tree, tvb, offset,
+                                    hf_ieee80211_tag_pasn_parameters_control,
+                                    ett_pasn_parameters, pasn_params_fields,
+                                    ENC_LITTLE_ENDIAN,
+                                    BMT_NO_FALSE | BMT_NO_INT);
+  offset += 1;
+
+  proto_tree_add_item(tree, hf_ieee80211_tag_pasn_parameters_wrapped_fmt,
+                      tvb, offset, 1, ENC_NA);
+  offset += 1;
+
+  /*
+   * If the Comeback field is present, it might not have a Comeback After
+   * field. Use the following heuristic function to check.
+   */
+  if (pasn_control & PASN_COMEBACK_INFO_PRESENT) {
+    proto_tree *comeback_tree = NULL;
+    proto_item *cbi = NULL;
+    guint8 cookie_len;
+
+    comeback_tree = proto_tree_add_subtree(tree, tvb, offset, -1,
+                    ett_pasn_comeback_tree, &cbi, "Comeback field");
+
+    if (has_comeback_after(pasn_control, tvb, offset, len)) {
+      proto_tree_add_item(comeback_tree, hf_ieee80211_tag_pasn_comeback_after,
+                          tvb, offset, 2, ENC_LITTLE_ENDIAN);
+      offset += 2;
+    }
+
+    cookie_len = tvb_get_guint8(tvb, offset);
+
+    proto_tree_add_item(comeback_tree, hf_ieee80211_tag_pasn_cookie_length,
+                        tvb, offset, 1, ENC_NA);
+    offset += 1;
+
+    if (cookie_len) {
+      proto_tree_add_item(comeback_tree, hf_ieee80211_tag_pasn_cookie,
+                          tvb, offset, cookie_len, ENC_NA);
+      offset += cookie_len;
+    }
+  }
+
+  if (pasn_control & PASN_GROUP_KEY_PRESENT) {
+    public_key_len = tvb_get_guint8(tvb, offset + 2);
+
+    proto_tree_add_item(tree, hf_ieee80211_tag_pasn_finite_cyclic_group_id, tvb,
+                        offset, 2, ENC_LITTLE_ENDIAN);
+    offset += 2;
+
+    proto_tree_add_item(tree, hf_ieee80211_tag_pasn_ephemeral_public_key_len,
+                        tvb, offset, 1, ENC_NA);
+    offset += 1;
+
+    if (public_key_len) {
+      proto_tree_add_item(tree, hf_ieee80211_tag_pasn_ephemeral_public_key, tvb,
+                        offset, public_key_len, ENC_NA);
+    }
+  }
+}
+
+static void
 add_min_max_time_between_measurements(proto_item *item, tvbuff_t *tvb, packet_info *pinfo, int offset, int sub_length)
 {
   guint64 ntb_specific, min, max;
@@ -22677,7 +23334,6 @@ add_min_max_time_between_measurements(proto_item *item, tvbuff_t *tvb, packet_in
   proto_item_append_text(item, " (Min=%.6gs, Max=%.6gs)", minf, maxf);
   col_append_fstr(pinfo->cinfo, COL_INFO, ", Min=%.6gs, Max=%.6gs", minf, maxf);
 }
-
 
 static void
 dissect_ntb_specific(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, int offset, int sub_length)
@@ -22767,6 +23423,25 @@ dissect_ranging_parameters(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree, 
     switch (sub_id) {
       case 0:  /* non-TB specific */
         dissect_ntb_specific(tvb, pinfo, tree, offset, sub_length);
+        break;
+      case 1: /* Ranging SUB_TB_SPECIFIC */
+        /* TODO: Specify the acceptable tagged elements */
+        offset += add_tagged_field(pinfo, tree, tvb, offset, 0, NULL, 0, NULL);
+
+        /* Now add the extra 32-bits of items */
+        proto_tree_add_item(tree, hf_ieee80211_tag_ranging_aid_rsid, tvb,
+                            offset, 4, ENC_LITTLE_ENDIAN);
+        proto_tree_add_item(tree, hf_ieee80211_tag_ranging_response, tvb,
+                            offset, 4, ENC_LITTLE_ENDIAN);
+        proto_tree_add_item(tree, hf_ieee80211_tag_ranging_trigger_frame_paddur,
+                            tvb, offset, 4, ENC_LITTLE_ENDIAN);
+        proto_tree_add_item(tree, hf_ieee80211_tag_ranging_passive_tb_ranging,
+                            tvb, offset, 4, ENC_LITTLE_ENDIAN);
+        proto_tree_add_item(tree, hf_ieee80211_tag_ranging_max_sess_exp, tvb,
+                            offset, 4, ENC_LITTLE_ENDIAN);
+        proto_tree_add_item(tree, hf_ieee80211_tag_ranging_bss_color_info, tvb,
+                            offset, 4, ENC_LITTLE_ENDIAN);
+        offset += 4;
         break;
       default:  /* skip unknown elements which may be defined in the future */
         break;
@@ -27514,7 +28189,7 @@ ieee80211_tag_element_id_extension(tvbuff_t *tvb, packet_info *pinfo, proto_tree
       }
       break;
     case ETAG_FILS_WRAPPED_DATA:
-      proto_tree_add_item(tree, hf_ieee80211_fils_wrapped_data, tvb, offset, ext_tag_len, ENC_NA);
+      dissect_wrapped_data(tree, pinfo, tvb, offset, ext_tag_len);
       break;
     case ETAG_FILS_NONCE:
       proto_tree_add_item(tree, hf_ieee80211_fils_nonce, tvb, offset, ext_tag_len, ENC_NA);
@@ -27590,6 +28265,18 @@ ieee80211_tag_element_id_extension(tvbuff_t *tvb, packet_info *pinfo, proto_tree
       break;
     case ETAG_FTM_SYNC_INFO:
       proto_tree_add_item(tree, hf_ieee80211_tag_ftm_tsf_sync_info, tvb, offset, ext_tag_len, ENC_NA);
+      break;
+    case ETAG_SECURE_LTF_PARAMETERS:
+      dissect_secure_ltf_parameters(tvb, pinfo, tree, offset, ext_tag_len);
+      break;
+    case ETAG_ISTA_AVAILABILITY_WINDOW:
+      dissect_ista_availability_window(tvb, pinfo, tree, offset, ext_tag_len);
+      break;
+    case ETAG_RSTA_AVAILABILITY_WINDOW:
+      dissect_rsta_availability_window(tvb, pinfo, tree, offset, ext_tag_len);
+      break;
+    case ETAG_PASN_PARAMETERS:
+      dissect_pasn_parameters(tvb, pinfo, tree, offset, ext_tag_len);
       break;
     default:
       proto_tree_add_item(tree, hf_ieee80211_ext_tag_data, tvb, offset, ext_tag_len, ENC_NA);
@@ -29194,11 +29881,9 @@ dissect_ieee80211_mgt(guint16 fcf, tvbuff_t *tvb, packet_info *pinfo, proto_tree
       offset = 6;  /* Size of fixed fields */
 
       fixed_tree = get_fixed_parameter_tree(mgt_tree, tvb, 0, offset, TRUE);
-      add_ff_auth_alg(fixed_tree, tvb, pinfo, 0);
-      add_ff_auth_trans_seq(fixed_tree, tvb, pinfo, 2);
-      add_ff_status_code(fixed_tree, tvb, pinfo, 4);
-      offset = add_ff_auth_sae(fixed_tree, tvb, pinfo, offset);
-      offset = add_ff_auth_fils(fixed_tree, tvb, pinfo, offset);
+      offset = dissect_auth_frame(fixed_tree, pinfo, tvb);
+      proto_item_append_text(fixed_tree, " (%d bytes)", offset);
+      proto_item_set_len(fixed_tree, offset);
 
       tagged_parameter_tree_len =
         tvb_reported_length_remaining(tvb, offset);
@@ -29628,6 +30313,8 @@ static const val64_string trigger_type_vals[] = {
   { 5, "GCR MU-BAR" },
   { 6, "Bandwidth Query Report Poll (BQRP)" },
   { 7, "NDP Feedback Report Poll (NFRP)" },
+  { 8, "Ranging" },
+  /* 9-15 reserved */
   { 0, NULL }
 };
 
@@ -29737,7 +30424,8 @@ static int * const common_info_headers[] = {
 
 static int
 add_he_trigger_common_info(proto_tree *tree, tvbuff_t *tvb, int offset,
-  packet_info *pinfo _U_, guint8 trigger_type, int *frame_len)
+  packet_info *pinfo _U_, guint8 trigger_type, int *frame_len,
+  proto_tree **common_tree)
 {
   proto_item     *pi = NULL;
   proto_tree     *common_info = NULL;
@@ -29749,6 +30437,7 @@ add_he_trigger_common_info(proto_tree *tree, tvbuff_t *tvb, int offset,
 
   common_info = proto_tree_add_subtree(tree, tvb, offset, -1,
                         ett_he_trigger_common_info, &pi, "Common Info");
+  *common_tree = common_info;
 
   proto_tree_add_bitmask_with_flags(common_info, tvb, offset,
                         hf_ieee80211_he_trigger_common_info,
@@ -30002,12 +30691,116 @@ add_he_trigger_user_info(proto_tree *tree, tvbuff_t *tvb, int offset,
   return length;
 }
 
+/*
+ * Dissect one of the ranging trigger types ...
+ */
+static int * const poll_rpt_hdrs[] = {
+  &hf_ieee80211_ranging_pol_rpt_aid12_rsid12,
+  &hf_ieee80211_ranging_pol_rpt_ru_alloc_region,
+  &hf_ieee80211_ranging_pol_rpt_ru_alloc,
+  &hf_ieee80211_ranging_pol_rpt_ul_fec_coding_type,
+  &hf_ieee80211_ranging_pol_rpt_ulmcs,
+  &hf_ieee80211_ranging_pol_rpt_uldcm,
+  &hf_ieee80211_ranging_pol_rpt_ss_alloc,
+  &hf_ieee80211_ranging_pol_rpt_ul_target_rssi,
+  &hf_ieee80211_ranging_pol_rpt_reserved,
+  NULL
+};
+
+static int * const sounding_hdrs[] = {
+  &hf_ieee80211_ranging_sounding_aid12_rsid12,
+  &hf_ieee80211_ranging_sounding_reserved1,
+  &hf_ieee80211_ranging_sounding_i2r_rep,
+  &hf_ieee80211_ranging_sounding_reserved2,
+  &hf_ieee80211_ranging_sounding_ss_allocation,
+  &hf_ieee80211_ranging_sounding_ul_target_rssi,
+  &hf_ieee80211_ranging_sounding_reserved3,
+  NULL
+};
+
+static int * const sec_sound_hdrs[] = {
+  &hf_ieee80211_ranging_sec_sound_aid12_rsid12,
+  &hf_ieee80211_ranging_sec_sound_reserved1,
+  &hf_ieee80211_ranging_sec_sound_i2r_rep,
+  &hf_ieee80211_ranging_sec_sound_reserved2,
+  &hf_ieee80211_ranging_sec_sound_ss_allocation,
+  &hf_ieee80211_ranging_sec_sound_ul_target_rssi,
+  &hf_ieee80211_ranging_sec_sound_reserved3,
+  NULL
+};
+
+static int
+dissect_ieee80211_ranging_trigger_variant(proto_tree *tree, tvbuff_t *tvb,
+                                          int offset, packet_info *pinfo _U_,
+                                          guint8 subtype)
+{
+  int saved_offset = offset;
+
+  switch (subtype) {
+  case 0:
+  case 3:
+    proto_tree_add_bitmask(tree, tvb, offset,
+                           hf_ieee80211_he_trigger_ranging_trigger_poll_rpt,
+                           ett_he_trigger_ranging_poll, poll_rpt_hdrs,
+                           ENC_LITTLE_ENDIAN);
+    offset += 5;
+    break;
+  case 1: /* Sounding subvariant */
+    proto_tree_add_bitmask(tree, tvb, offset,
+                           hf_ieee80211_he_trigger_ranging_trigger_sounding,
+                           ett_he_trigger_ranging_poll, sounding_hdrs,
+                           ENC_LITTLE_ENDIAN);
+    offset += 5;
+    break;
+  case 2:
+    proto_tree_add_bitmask(tree, tvb, offset,
+                           hf_ieee80211_he_trigger_ranging_trigger_sec_sound,
+                           ett_he_trigger_ranging_poll, sec_sound_hdrs,
+                           ENC_LITTLE_ENDIAN);
+    offset += 5;
+
+    proto_tree_add_item(tree, hf_ieee80211_he_trigger_ranging_user_info_sac,
+                        tvb, offset, 2, ENC_LITTLE_ENDIAN);
+    offset += 2;
+  default:
+    break;
+  }
+
+
+  return offset - saved_offset;
+}
+
+static const range_string ranging_trigger_subtype_vals[] = {
+  { 0, 0, "Poll" },
+  { 1, 1, "Sounding" },
+  { 2, 2, "Secured Sounding" },
+  { 3, 3, "Report" },
+  { 4, 4, "Passive TB Measurement Exchange" },
+  { 5, 15, "Reserved" },
+  { 0, 0, NULL},
+};
+
+static int * const ranging_headers1[] = {
+  &hf_ieee80211_ranging_trigger_subtype1,
+  &hf_ieee80211_ranging_trigger_reserved1,
+  &hf_ieee80211_ranging_trigger_token,
+  NULL
+};
+
+static int * const ranging_headers2[] = {
+  &hf_ieee80211_ranging_trigger_subtype2,
+  &hf_ieee80211_ranging_trigger_reserved2,
+  &hf_ieee80211_ranging_trigger_sounding_dialog_token,
+  NULL
+};
+
 static int
 dissect_ieee80211_he_trigger(tvbuff_t *tvb, packet_info *pinfo _U_,
   proto_tree *tree, int offset)
 {
   const gchar *ether_name = tvb_get_ether_name(tvb, offset);
   proto_item      *hidden_item;
+  proto_tree      *common_tree = NULL;
   guint8          trigger_type = 0;
   int             length = 0;
 
@@ -30032,13 +30825,46 @@ dissect_ieee80211_he_trigger(tvbuff_t *tvb, packet_info *pinfo _U_,
    * Deal with the common Info and then any user info after that.
    */
   offset += add_he_trigger_common_info(tree, tvb, offset, pinfo,
-                        trigger_type, &length);
+                        trigger_type, &length, &common_tree);
 
   /*
-   * Now the User Info field. It returns an offset not a length used.
+   * If the trigger type is Ranging Trigger type, then deal with it separately.
    */
-  add_he_trigger_user_info(tree, tvb, offset, pinfo,
-                        trigger_type, &length);
+  if (trigger_type == 8) {
+    guint8 subtype = tvb_get_guint8(tvb, offset) & 0x0f;
+
+    col_append_fstr(pinfo->cinfo, COL_INFO, ": %s",
+                    rval_to_str(subtype, ranging_trigger_subtype_vals,
+                                "Reserved"));
+
+    switch (subtype) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+      proto_tree_add_bitmask(common_tree, tvb, offset,
+                             hf_ieee80211_he_trigger_ranging_common_info_1,
+                             ett_he_trigger_ranging, ranging_headers1,
+                             ENC_NA);
+      offset += 1;
+      break;
+    case 4:
+      proto_tree_add_bitmask(common_tree, tvb, offset,
+                             hf_ieee80211_he_trigger_ranging_common_info_2,
+                             ett_he_trigger_ranging, ranging_headers2,
+                             ENC_NA);
+      offset += 2;
+      break;
+    default:
+      break;
+    }
+
+    dissect_ieee80211_ranging_trigger_variant(tree, tvb, offset,
+                                              pinfo, subtype);
+  } else {
+    add_he_trigger_user_info(tree, tvb, offset, pinfo,
+                             trigger_type, &length);
+  }
 
   /*
    *  Padding should commence here ... TODO, deal with it.
@@ -30113,17 +30939,58 @@ static int * const vht_ndp_headers[] = {
   NULL
 };
 
+static int * const sta_info_ranging_2008[] = {
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_aid11,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_ltf_offset,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_r2i_n_sts,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_r2i_rep,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_i2r_n_sts,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_reserved1,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_disambiguation,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_i2r_rep,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_reserved2,
+  NULL
+};
+
+static int * const sta_info_ranging_2043[] = {
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043_aid11,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043_sac,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043_disambiguation,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043_reserved,
+  NULL
+};
+
+static int * const sta_info_ranging_2044[] = {
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_aid11,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_partial_tsf,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_disambiguation,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_reserved,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_token,
+  NULL
+};
+
+static int * const sta_info_ranging_2045[] = {
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_aid11,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_i2r_ndp_tx_power,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_r2i_ndp_target_rssi,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_disambiguation,
+  &hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_reserved,
+  NULL
+};
+
 static int
 dissect_ieee80211_vht_ndp_annc(tvbuff_t *tvb, packet_info *pinfo _U_,
   proto_tree *tree, int offset, gboolean has_fcs)
 {
   guint16          sta_info;
   guint8           len_fcs = 0;
+  guint8           sounding_dialog_token;
   proto_tree      *sta_list;
   proto_item      *sta_info_item, *pi;
   int              saved_offset = 0;
   int              sta_index = 0;
 
+  sounding_dialog_token = tvb_get_guint8(tvb, offset);
   proto_tree_add_bitmask_with_flags(tree, tvb, offset,
                         hf_ieee80211_vht_ndp_annc_token, ett_vht_ndp_annc,
                         vht_ndp_headers, ENC_NA, BMT_NO_APPEND);
@@ -30146,16 +31013,43 @@ dissect_ieee80211_vht_ndp_annc(tvbuff_t *tvb, packet_info *pinfo _U_,
     proto_tree_add_item(sta_info_item, hf_ieee80211_vht_ndp_annc_sta_info_feedback_type,
                         tvb, offset, 2, ENC_LITTLE_ENDIAN);
 
-    sta_info = tvb_get_letohs(tvb, offset);
+    if (sounding_dialog_token & 0x01) {
+      guint16 aid11 = tvb_get_guint16(tvb, offset, ENC_LITTLE_ENDIAN) & 0x7ff;
+      if (aid11 < 2008) {
+        proto_tree_add_bitmask_with_flags(sta_info_item, tvb, offset,
+                              hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008, ett_vht_ranging_annc,
+                              sta_info_ranging_2008, ENC_LITTLE_ENDIAN, BMT_NO_APPEND);
+      } else if (aid11 == 2043) {
+        proto_tree_add_bitmask_with_flags(tree, tvb, offset,
+                              hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043, ett_vht_ranging_annc,
+                              sta_info_ranging_2043, ENC_LITTLE_ENDIAN, BMT_NO_APPEND);
+      } else if (aid11 == 2044) {
+        proto_tree_add_bitmask_with_flags(tree, tvb, offset,
+                              hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044, ett_vht_ranging_annc,
+                              sta_info_ranging_2044, ENC_LITTLE_ENDIAN, BMT_NO_APPEND);
+      } else if (aid11 == 2045) {
+        proto_tree_add_bitmask_with_flags(tree, tvb, offset,
+                              hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045, ett_vht_ranging_annc,
+                              sta_info_ranging_2045, ENC_LITTLE_ENDIAN, BMT_NO_APPEND);
+      }
+      offset += 4;
+    } else {
+      proto_tree_add_item(sta_info_item, hf_ieee80211_vht_ndp_annc_sta_info_aid12,
+                          tvb, offset, 2, ENC_LITTLE_ENDIAN);
+      proto_tree_add_item(sta_info_item, hf_ieee80211_vht_ndp_annc_sta_info_feedback_type,
+                          tvb, offset, 2, ENC_LITTLE_ENDIAN);
 
-    if (sta_info & 0x1000)
-       proto_tree_add_uint(sta_info_item,
-                           hf_ieee80211_vht_ndp_annc_sta_info_nc_index,
-                           tvb, offset, 2, sta_info);
-    else
-       proto_tree_add_item(sta_info_item, hf_ieee80211_vht_ndp_annc_sta_info_reserved,
-                           tvb, offset, 2, ENC_LITTLE_ENDIAN);
-    offset += 2;
+      sta_info = tvb_get_letohs(tvb, offset);
+
+      if (sta_info & 0x1000)
+        proto_tree_add_uint(sta_info_item,
+                            hf_ieee80211_vht_ndp_annc_sta_info_nc_index,
+                            tvb, offset, 2, sta_info);
+      else
+        proto_tree_add_item(sta_info_item, hf_ieee80211_vht_ndp_annc_sta_info_reserved,
+                            tvb, offset, 2, ENC_LITTLE_ENDIAN);
+      offset += 2;
+    }
   }
 
   proto_item_set_len(pi, offset - saved_offset);
@@ -30240,6 +31134,7 @@ dissect_ieee80211_vht_he_ndp_annc(tvbuff_t *tvb, packet_info *pinfo _U_,
   offset += 6;
 
   dialog_token = tvb_get_guint8(tvb, offset);
+  col_append_fstr(pinfo->cinfo, COL_INFO, ", Sounding Dialog Token=%d", dialog_token);
 
   /*
    * Is it VHT or HE?
@@ -33201,7 +34096,7 @@ try_decrypt_keydata(packet_info *pinfo)
                                         dec_data, &dec_caplen,
                                         &used_key);
   if (ret == DOT11DECRYPT_RET_SUCCESS && dec_caplen > 0) {
-    proto_eapol_keydata_t *eapol = wmem_new(wmem_file_scope(), proto_eapol_keydata_t);
+    proto_keydata_t *eapol = wmem_new(wmem_file_scope(), proto_keydata_t);
     eapol->used_key = used_key;
     eapol->keydata_len = dec_caplen;
     eapol->keydata = (guint8 *)wmem_memdup(wmem_file_scope(), dec_data, dec_caplen);
@@ -33244,6 +34139,10 @@ static void
 try_scan_ft_assoc_keys(packet_info *pinfo, const wlan_hdr_t *whdr)
 {
   DOT11DECRYPT_ASSOC_PARSED assoc_parsed;
+  guint8 decrypted_buf[DOT11DECRYPT_WPA_PTK_MAX_LEN];
+  size_t decrypted_len = 0;
+  DOT11DECRYPT_KEY_ITEM used_key;
+  gint ret;
 
   if (!enable_decryption || pinfo->fd->visited || !whdr) {
     return;
@@ -33261,7 +34160,18 @@ try_scan_ft_assoc_keys(packet_info *pinfo, const wlan_hdr_t *whdr)
   memcpy(assoc_parsed.sa, whdr->src.data, 6);
   memcpy(assoc_parsed.da, whdr->dst.data, 6);
 
-  Dot11DecryptScanFtAssocForKeys(&dot11decrypt_ctx, &assoc_parsed);
+  ret = Dot11DecryptScanFtAssocForKeys(&dot11decrypt_ctx, &assoc_parsed,
+                                       decrypted_buf, &decrypted_len,
+                                       &used_key);
+  if (ret == DOT11DECRYPT_RET_SUCCESS_HANDSHAKE && decrypted_len > 0) {
+    proto_keydata_t *proto = wmem_new(wmem_file_scope(), proto_keydata_t);
+    proto->used_key = used_key;
+    proto->keydata_len = (guint)decrypted_len;
+    proto->keydata = (guint8 *)wmem_memdup(wmem_file_scope(), decrypted_buf, decrypted_len);
+
+    /* Save decrypted GTK keydata for tag dissector */
+    p_add_proto_data(wmem_file_scope(), pinfo, proto_wlan, DECRYPTED_GTK_KEY, proto);
+  }
 }
 
 /*
@@ -33531,15 +34441,14 @@ dissect_wlan_rsna_eapol_wpa_or_rsn_key(tvbuff_t *tvb, packet_info *pinfo, proto_
         try_decrypt_keydata(pinfo);
       }
 
-      proto_eapol_keydata_t *eapol;
-      eapol = (proto_eapol_keydata_t*)
+      proto_keydata_t *eapol;
+      eapol = (proto_keydata_t*)
         p_get_proto_data(wmem_file_scope(), pinfo, proto_wlan, DECRYPTED_EAPOL_KEY);
 
       if (eapol) {
         int keydata_len = eapol->keydata_len;
         tvbuff_t *next_tvb = tvb_new_child_real_data(tvb, eapol->keydata,
                                                      keydata_len, keydata_len);
-        char out_buff[SHORT_STR];
         keydes_tree = proto_item_add_subtree(ti, ett_wlan_rsna_eapol_keydes_data);
 
         if (keydes_version == KEYDES_VER_TYPE1) {
@@ -33559,18 +34468,7 @@ dissect_wlan_rsna_eapol_wpa_or_rsn_key(tvbuff_t *tvb, packet_info *pinfo, proto_
           }
         }
         /* Also add the PTK used to to decrypt and validate the keydata. */
-        const guint8 *key = NULL;
-        int len = Dot11DecryptGetKCK(&eapol->used_key, &key);
-        bytes_to_hexstr(out_buff, key, len);
-        out_buff[2 * len] = '\0';
-        ti = proto_tree_add_string(keydes_tree, hf_ieee80211_fc_analysis_kck, tvb, 0, 0, out_buff);
-        proto_item_set_generated(ti);
-
-        len = Dot11DecryptGetKEK(&eapol->used_key, &key);
-        bytes_to_hexstr(out_buff, key, len);
-        out_buff[2 * len] = '\0';
-        ti = proto_tree_add_string(keydes_tree, hf_ieee80211_fc_analysis_kek, tvb, 0, 0, out_buff);
-        proto_item_set_generated(ti);
+        add_ptk_analysis(tvb, keydes_tree, &eapol->used_key);
       }
     } else {
       keydes_tree = proto_item_add_subtree(ti, ett_wlan_rsna_eapol_keydes_data);
@@ -34621,7 +35519,142 @@ proto_register_ieee80211(void)
 
     {&hf_ieee80211_vht_ndp_annc_sta_info_reserved,
      {"Reserved", "wlan.vht_ndp.sta_info.reserved",
-      FT_UINT16, BASE_HEX, NULL, 0xE000,
+      FT_UINT32, BASE_HEX, NULL, 0xE000,
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008,
+     {"STA Info, AID11 < 2008", "wlan.vht_ndp.sta_info.ranging_2008",
+      FT_UINT32, BASE_HEX, NULL, 0,
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_aid11,
+     {"AID11", "wlan.vht_ndp.sta_info.ranging_2008.aid11",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(10, 0),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_ltf_offset,
+     {"LTF Offset", "wlan.vht_ndp.sta_info.ranging_2008.ltf_offset",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(16, 11),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_r2i_n_sts,
+     {"R2I N STS", "wlan.vht_ndp.sta_info.ranging_2008.r2i_n_sts",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(19, 17),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_r2i_rep,
+     {"R2I Rep", "wlan.vht_ndp.sta_info.ranging_2008.r2i_rep",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(22, 20),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_i2r_n_sts,
+     {"I2R N STS", "wlan.vht_ndp.sta_info.ranging_2008.i2r_n_sts",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(25, 23),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_reserved1,
+     {"Reserved", "wlan.vht_ndp.sta_info.ranging_2008.reserved1",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(26, 26),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_disambiguation,
+     {"Disambiguation", "wlan.vht_ndp.sta_info.ranging_2008.disambiguation",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(27, 27),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_i2r_rep,
+     {"I2R Rep", "wlan.vht_ndp.sta_info.ranging_2008.i2r_rep",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(30, 28),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2008_reserved2,
+     {"Reserved", "wlan.vht_ndp.sta_info.ranging_2008.reserved2",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(31, 31),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043,
+     {"STA Info, AID11 == 2043", "wlan.sta_info_ranging_2043",
+      FT_UINT32, BASE_HEX, NULL, 0,
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043_aid11,
+     {"AID11", "wlan.sta_info_ranging_2043.aid11",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(10, 1),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043_sac,
+     {"SAC", "wlan.sta_info_ranging_2043.sac",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(26, 11),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043_disambiguation,
+     {"Disambiguation", "wlan.sta_info_ranging_2043.disambiguation",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(27, 27),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2043_reserved,
+     {"Reserved", "wlan.sta_info_ranging_2043.reserved",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(31, 28),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044,
+     {"STA Info, AID11 == 2044", "wlan.sta_info_ranging_2044",
+      FT_UINT32, BASE_HEX, NULL, 0,
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_aid11,
+     {"AID11", "wlan.sta_info_ranging_2044.aid11",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(10, 1),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_partial_tsf,
+     {"Partial TSF", "wlan.sta_info_ranging_2044.partial_tsf",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(26, 11),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_disambiguation,
+     {"Disambiguation", "wlan.sta_info_ranging_2044.disambiguation",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(27, 27),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_reserved,
+     {"Reserved", "wlan.sta_info_ranging_2044.reserved",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(28, 28),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2044_token,
+     {"Token", "wlan.sta_info_ranging_2044.token",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(31, 29),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045,
+     {"STA Info Ranging, AID11 == 2045", "wlan.sta_info_ranging_2045",
+      FT_UINT32, BASE_HEX, NULL, 0,
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_aid11,
+     {"AID11", "wlan.sta_info_ranging_2045.aid11",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(10, 1),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_i2r_ndp_tx_power,
+     {"I2R NDP Tx Power", "wlan.sta_info_ranging_2045.i2r_ndp_tx_power",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(18, 11),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_r2i_ndp_target_rssi,
+     {"R2I NDP Target RSSI", "wlan.sta_info_ranging_2045.r2i_ndp_target_rssi",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(26, 19),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_disambiguation,
+     {"Disambiguation", "wlan.sta_info_ranging_2045.disambiguation",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(27, 27),
+      NULL, HFILL }},
+
+    {&hf_ieee80211_vht_ndp_annc_sta_info_ranging_2045_reserved,
+     {"Reserved", "wlan.sta_info_ranging_2045.reserved",
+      FT_UINT32, BASE_DEC, NULL, GENMASK(31, 28),
       NULL, HFILL }},
 
     {&hf_ieee80211_data_encap_payload_type,
@@ -37146,12 +38179,12 @@ proto_register_ieee80211(void)
 
     {&hf_ieee80211_tag_ranging_max_r2i_ltf_total,
      {"Max R2I LTF Total", "wlan.ranging.max_r2i_ltf_total",
-      FT_UINT48, BASE_DEC, NULL, GENMASK64(39, 38),
+      FT_UINT48, BASE_DEC | BASE_VAL64_STRING, VALS64(ieee80211_ranging_ltf_total_vals), GENMASK64(39, 38),
       NULL, HFILL }},
 
     {&hf_ieee80211_tag_ranging_max_i2r_ltf_total,
      {"Max I2R LTF Total", "wlan.ranging.max_i2r_ltf_total",
-      FT_UINT48, BASE_DEC, NULL, GENMASK64(41, 40),
+      FT_UINT48, BASE_DEC | BASE_VAL64_STRING, VALS64(ieee80211_ranging_ltf_total_vals), GENMASK64(41, 40),
       NULL, HFILL }},
 
     {&hf_ieee80211_tag_ranging_max_i2r_sts_le_80_mhz,
@@ -37201,6 +38234,31 @@ proto_register_ieee80211(void)
       FT_UINT48, BASE_DEC, NULL, GENMASK64(47, 46),
       NULL, HFILL }},
 
+    {&hf_ieee80211_tag_ranging_aid_rsid,
+     {"AID/RSID", "wlan.ranging.tb.aid_rsid",
+      FT_UINT32, BASE_HEX, NULL, 0x0000ffff, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_ranging_response,
+     {"Response", "wlan.ranging.tb.response",
+      FT_BOOLEAN, 32, NULL, 0x00010000, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_ranging_trigger_frame_paddur,
+     {"Trigger Frame Padding Duration",
+      "wlan.ranging.tb.trigger_frame_padding_duration",
+      FT_UINT32, BASE_DEC, NULL, 0x00060000, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_ranging_passive_tb_ranging,
+     {"Passive TB Ranging", "wlan.ranging.tb.passive_tb_ranging",
+      FT_BOOLEAN, 32, NULL, 0x00080000, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_ranging_max_sess_exp,
+     {"Max Session Exp", "wlan.ranging.tb.max_session.exp",
+      FT_UINT32, BASE_DEC, NULL, 0x00f00000, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_ranging_bss_color_info,
+     {"BSS Color Information", "wlan.ranging.tb.bss_color_information",
+      FT_UINT32, BASE_HEX, NULL, 0xff000000, NULL, HFILL }},
+
     {&hf_ieee80211_ff_ftm_max_tod_error_exponent,
      {"Max TOD Error Exponent", "wlan.fixed.ftm.max_tod_error_exponent",
       FT_UINT8, BASE_DEC, NULL, GENMASK(4, 0), NULL, HFILL }},
@@ -37248,6 +38306,91 @@ proto_register_ieee80211(void)
      {"I2R NDP Target RSSI", "wlan.fixed.ftm.param.i2r_ndp_target_rssi",
       FT_UINT8, BASE_DEC, 0, 0,
       NULL, HFILL }},
+
+    {&hf_ieee80211_tag_secure_ltf_params_counter,
+     {"Secure LTF Counter", "wlan.etag.secure_ltf_params.secure_ltf_counter",
+      FT_UINT48, BASE_DEC, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_secure_ltf_generation_sac,
+     {"LTF Generation SAC", "wlan.etag.secure_ltf_params.ltf_generation_sac",
+      FT_UINT16, BASE_HEX, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_secure_ltf_management_sac,
+     {"Ranging Management SAC",
+      "wlan.etag.secure_ltf_params.ranging_management_sac",
+      FT_UINT16, BASE_HEX, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_secure_ltf_result_ltf_ofs,
+     {"Measurement Result LTF Offset",
+      "wlan.etag.secure_ltf_params.measurement_result_ltf_offset",
+     FT_UINT8, BASE_DEC, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_ista_availability_count,
+     {"ISTA Availability Count", "wlan.ranging.ista.availability_count",
+      FT_UINT16, BASE_DEC, NULL, 0x01FF, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_ista_availability_reserved,
+     {"Reserved", "wlan.ranging.ista.availability_reserved",
+      FT_UINT16, BASE_HEX, NULL, 0xFE00, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_ista_avail_bits,
+     {"ISTA Availability", "wlan.ranging.ista.availability_bits",
+      FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_ista_avail_pad,
+     {"Padding", "wlan.ranging.ista.availability_pad",
+      FT_STRING, BASE_NONE, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_rsta_count,
+     {"RSTA Count", "wlan.ranging.rsta.count",
+      FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_rsta_partial_tsf_timer1,
+     {"Partial TSF Timer", "wlan.ranging.rsta.partial_tsf_timer",
+      FT_UINT32, BASE_HEX, NULL, 0xffff, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_rsta_duration1,
+     {"Duration", "wlan.ranging.rsta.duration",
+      FT_UINT32, BASE_HEX, NULL, 0x7f0000, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_rsta_passive_tb_ranging_avail_win1,
+     {"Passive TB Ranging Availability Window",
+      "wlan.ranging.rsta.passive_ranging_availability_window",
+      FT_BOOLEAN, 32, NULL, 0x800000, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_rsta_periodicity1,
+     {"Periodicity", "wlan.ranging.rsta.periodicity",
+      FT_UINT32, BASE_DEC, NULL, 0xff000000, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_rsta_partial_tsf_timer,
+     {"Partial TSF Timer", "wlan.ranging.rsta.partial_tsf_timer",
+      FT_UINT40, BASE_HEX, NULL, 0xffff, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_rsta_duration,
+     {"Duration", "wlan.ranging.rsta.duration",
+      FT_UINT40, BASE_HEX, NULL, 0x7f0000, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_rsta_passive_tb_ranging_avail_win,
+     {"Passive TB Ranging Availability Window",
+      "wlan.ranging.rsta.passive_ranging_availability_window",
+      FT_BOOLEAN, 40, NULL, 0x800000, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_rsta_periodicity,
+     {"Periodicity", "wlan.ranging.rsta.periodicity",
+      FT_UINT40, BASE_DEC, NULL, 0xff000000, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_rsta_passive_tb_ranging_params,
+     {"Passive TB Ranging params",
+      "wlan.ranging.rsta.passive_tb_ranging_params",
+      FT_UINT8, BASE_HEX, NULL, 0xff00000000, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_rsta_avail_subfield_short,
+     {"RSTA Availability Information", "wlan.ranging.rsta.availability_window",
+      FT_UINT32, BASE_HEX, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_ftm_rsta_avail_subfield_long,
+     {"RSTA Availability Information", "wlan.ranging.rsta.availability_window",
+      FT_UINT40, BASE_HEX, NULL, 0x0, NULL, HFILL }},
 
     {&hf_ieee80211_ff_psmp_sta_info,
      {"Power Save Multi-Poll (PSMP) Station Information", "wlan.fixed.psmp.stainfo",
@@ -40241,6 +41384,10 @@ proto_register_ieee80211(void)
      {"Reserved", "wlan.rnr.bss_parameters.b7",
       FT_BOOLEAN, 8, NULL, 0x80,
       NULL, HFILL }},
+
+    {&hf_ieee80211_rnr_20_mhz_psd,
+     {"20 MHz PSD", "wlan.rnr.20_mhz_psd",
+      FT_UINT8, BASE_DEC, NULL, 0x0, NULL, HFILL }},
 
     {&hf_ieee80211_s1g_cap_byte1,
      {"S1G Capabilities Byte 1", "wlan.s1g.capabilities.byte1",
@@ -45525,6 +46672,154 @@ proto_register_ieee80211(void)
      {"Reserved", "wlan.trigger.he.user_reserved",
       FT_UINT40, BASE_HEX, NULL, 0x8000000000, NULL, HFILL }},
 
+    {&hf_ieee80211_he_trigger_ranging_common_info_1,
+     {"Ranging Common Info", "wlan.trigger.he.ranging.common_info",
+      FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_he_trigger_ranging_common_info_2,
+     {"Ranging Common Info", "wlan.trigger.he.ranging.common_info",
+      FT_UINT16, BASE_HEX, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_trigger_subtype1,
+     {"Ranging Trigger Subtype",
+      "wlan.trigger.he.ranging.ranging_trigger_subtype",
+      FT_UINT8, BASE_RANGE_STRING|BASE_HEX, RVALS(ranging_trigger_subtype_vals),
+      0x0f, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_trigger_reserved1,
+     {"Reserved", "wlan.trigger.he.ranging.reserved",
+      FT_UINT8, BASE_HEX, NULL, 0x10, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_trigger_token,
+     {"Token", "wlan.trigger.he.ranging.token",
+      FT_UINT8, BASE_HEX, NULL, 0xe0, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_trigger_subtype2,
+     {"Ranging Trigger Subtype",
+      "wlan.trigger.he.ranging.ranging_trigger_subtype",
+      FT_UINT16, BASE_RANGE_STRING|BASE_HEX,
+      RVALS(ranging_trigger_subtype_vals), 0x000f, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_trigger_reserved2,
+     {"Reserved", "wlan.trigger.he.ranging.reserved2",
+      FT_UINT16, BASE_HEX, NULL, 0x03f0, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_trigger_sounding_dialog_token,
+     {"Sounding Dialog Token Number",
+      "wlan.trigger.he.ranging.sounding_dialog_token",
+      FT_UINT16, BASE_HEX, NULL, 0xfc00, NULL, HFILL }},
+
+    {&hf_ieee80211_he_trigger_ranging_trigger_poll_rpt,
+     {"Ranging Trigger Poll/Rpt", "wlan.trigger.he.ranging.poll_rpt",
+      FT_UINT40, BASE_HEX, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_pol_rpt_aid12_rsid12,
+     {"AID12/RSID12", "wlan.trigger.he.ranging.poll_rpt.aid12_rsid12",
+      FT_UINT40, BASE_DEC, NULL, 0x0000000fff, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_pol_rpt_ru_alloc_region,
+     {"RU Allocation Region", "wlan.trigger.he.ranging.poll_rpt.ru_allocation_region",
+      FT_UINT40, BASE_CUSTOM, CF_FUNC(he_trigger_ru_allocation_region_custom),
+      0x0000001000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_pol_rpt_ru_alloc,
+     {"RU Allocation", "wlan.trigger.he.ranging.poll_rpt.ru_allocation",
+      FT_UINT40, BASE_CUSTOM, CF_FUNC(he_ru_allocation_base_custom), 0x00000fe000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_pol_rpt_ul_fec_coding_type,
+     {"UL FEC Coding Type",
+      "wlan.trigger.he.ranging.poll_rpt.ul_fec_coding_type",
+      FT_BOOLEAN, 40, TFS(&he_trigger_ul_fec_coding_type_tfs), 0x0000100000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_pol_rpt_ulmcs,
+     {"UL MCS", "wlan.trigger.he.ranging.poll_rpt.ul_mcs",
+      FT_UINT40, BASE_HEX, NULL, 0x0001e00000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_pol_rpt_uldcm,
+     {"UL DCM", "wlan.trigger.he.ranging.poll_rpt.ul_dcm",
+      FT_UINT40, BASE_HEX, NULL, 0x0002000000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_pol_rpt_ss_alloc,
+     {"SS Allocation", "wlan.trigger.he.ranging.poll_rpt.ss_allocation",
+      FT_UINT40, BASE_HEX, NULL, 0x00fc000000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_pol_rpt_ul_target_rssi,
+     {"UL Target RSSI", "wlan.trigger.he.ranging.poll_rpt.ul_target_rssi",
+      FT_UINT40, BASE_CUSTOM, CF_FUNC(target_rssi_base_custom), 0x7f00000000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_pol_rpt_reserved,
+     {"Reserved", "wlan.trigger.he.ranging.poll_rpt.reserved",
+      FT_UINT40, BASE_HEX, NULL, 0x8000000000, NULL, HFILL }},
+
+    {&hf_ieee80211_he_trigger_ranging_trigger_sounding,
+     {"Ranging Trigger Sounding", "wlan.trigger.he.ranging.sounding",
+      FT_UINT40, BASE_HEX, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sounding_aid12_rsid12,
+     {"AID12/RSID12", "wlan.trigger.he.ranging.sounding.aid12_rsid12",
+      FT_UINT40, BASE_DEC, NULL, 0x0000000fff, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sounding_reserved1,
+     {"Reserved", "wlan.trigger.he.ranging.sounding.reserved1",
+      FT_UINT40, BASE_HEX, NULL, 0x00001ff000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sounding_i2r_rep,
+     {"I2R Rep", "wlan.trigger.he.ranging.sounding.i2r_rep",
+      FT_UINT40, BASE_DEC, NULL, 0x0000e00000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sounding_reserved2,
+     {"Reserved", "wlan.trigger.he.ranging.sounding.reserved2",
+      FT_UINT40, BASE_HEX, NULL, 0x0003000000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sounding_ss_allocation,
+     {"SS Allocation", "wlan.trigger.he.ranging.sounding.ss_allocation",
+      FT_UINT40, BASE_HEX, NULL, 0x00fc000000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sounding_ul_target_rssi,
+     {"UL Target RSSI", "wlan.trigger.he.ranging.sounding.ul_target_rssi",
+      FT_UINT40, BASE_CUSTOM, CF_FUNC(target_rssi_base_custom), 0x7f00000000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sounding_reserved3,
+     {"Reserved", "wlan.trigger.he.ranging.sounding.reserved3",
+      FT_UINT40, BASE_HEX, NULL, 0x8000000000, NULL, HFILL }},
+
+    {&hf_ieee80211_he_trigger_ranging_trigger_sec_sound,
+     {"Secured Sounding", "wlan.trigger.he.ranging.secured_sounding",
+      FT_UINT40, BASE_HEX, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sec_sound_aid12_rsid12,
+     {"AID12/RSID12", "wlan.trigger.he.ranging.secured_sounding.aid12_rsid12",
+      FT_UINT40, BASE_DEC, NULL, 0x0000000fff, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sec_sound_reserved1,
+     {"Reserved", "wlan.trigger.he.ranging.secured_sounding.reserved1",
+      FT_UINT40, BASE_HEX, NULL, 0x00001ff000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sec_sound_i2r_rep,
+     {"I2R Rep", "wlan.trigger.he.ranging.secured_sounding.i2r_rep",
+      FT_UINT40, BASE_HEX, NULL, 0x0000e00000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sec_sound_reserved2,
+     {"Reserved", "wlan.trigger.he.ranging.secured_sounding.reserved2",
+      FT_UINT40, BASE_HEX, NULL, 0x0003000000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sec_sound_ss_allocation,
+     {"SS Allocation", "wlan.trigger.he.ranging.secured_sounding.ss_allocation",
+      FT_UINT40, BASE_HEX, NULL, 0x00fc000000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sec_sound_ul_target_rssi,
+     {"UL Target RSSI",
+      "wlan.trigger.he.ranging.secured_sounding.ul_target_rssi",
+      FT_UINT40, BASE_HEX, NULL, 0x7f00000000, NULL, HFILL }},
+
+    {&hf_ieee80211_ranging_sec_sound_reserved3,
+     {"Reserved", "wlan.trigger.he.ranging.secured_sounding.reserved3",
+      FT_UINT40, BASE_HEX, NULL, 0x8000000000, NULL, HFILL }},
+
+    {&hf_ieee80211_he_trigger_ranging_user_info_sac,
+     {"SAC", "wlan.trigger.he.ranging.user_info.sac",
+      FT_UINT16, BASE_HEX, NULL, 0x0, NULL, HFILL }},
+
     {&hf_ieee80211_he_qtp_control,
      {"Control", "wlan.ext_tag.quiet_time_period.control",
       FT_UINT8, BASE_RANGE_STRING | BASE_HEX, RVALS(quiet_time_period_control_rvals), 0,
@@ -45939,6 +47234,11 @@ proto_register_ieee80211(void)
 
     {&hf_ieee80211_tag_ft_subelem_gtk_key,
      {"GTK", "wlan.ft.subelem.gtk.key",
+      FT_BYTES, BASE_NONE, NULL, 0,
+      NULL, HFILL }},
+
+    {&hf_ieee80211_tag_ft_subelem_gtk_key_encrypted,
+     {"GTK (encrypted)", "wlan.ft.subelem.gtk.key_encrypted",
       FT_BYTES, BASE_NONE, NULL, 0,
       NULL, HFILL }},
 
@@ -46897,11 +48197,6 @@ proto_register_ieee80211(void)
 
     {&hf_ieee80211_fils_encrypted_data,
      {"FILS Encrypted Data", "wlan.ext_tag.fils.encrypted_data",
-      FT_BYTES, BASE_NONE, NULL, 0x0,
-      NULL, HFILL }},
-
-    {&hf_ieee80211_fils_wrapped_data,
-     {"FILS Wrapped Data", "wlan.ext_tag.fils.wrapped_data",
       FT_BYTES, BASE_NONE, NULL, 0x0,
       NULL, HFILL }},
 
@@ -48216,6 +49511,62 @@ proto_register_ieee80211(void)
     {&hf_ieee80211_owe_dh_parameter_public_key,
      {"Public Key", "wlan.ext_tag.owe_dh_parameter.public_key",
       FT_BYTES, BASE_NONE, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_pasn_parameters_control,
+     {"Control", "wlan.etag.pasn_params.control",
+      FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_pasn_params_comeback_info_present,
+     {"Comeback Info Present", "wlan.etag.pasn_params.comeback_info_present",
+      FT_BOOLEAN, 8, NULL, 0x01, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_pasn_params_group_and_key_present,
+     {"Group and Key Present", "wlan.etag.pasn_params.group_and_key_present",
+      FT_BOOLEAN, 8, NULL, 0x02, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_pasn_parameters_reserved,
+     {"Reserved", "wlan.etag.pasn_parameters.reserved",
+      FT_UINT8, BASE_HEX, NULL, 0xFC, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_pasn_parameters_wrapped_fmt,
+      {"Wrapped Data Format", "wlan.etag.pasn_parameters.wrapped_data_format",
+       FT_UINT8, BASE_HEX|BASE_RANGE_STRING, RVALS(wrapped_data_fmt_rvals),
+       0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_pasn_comeback_after,
+     {"Comeback After", "wlan.etag.pasn_parameters.comeback_after",
+      FT_UINT16, BASE_DEC|BASE_UNIT_STRING, &units_tu_tus, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_pasn_cookie_length,
+     {"Cookie length", "wlan.etag.pasn_parameters.cookie_length",
+      FT_UINT8, BASE_DEC, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_pasn_cookie,
+     {"Cookie", "wlan.etag.pasn_parameters.cookie",
+      FT_BYTES, BASE_NONE, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_pasn_finite_cyclic_group_id,
+     {"Finite Cyclic Group ID",
+      "wlan.etag.pasn_parameters.finite_cyclic_group_id",
+      FT_UINT16, BASE_DEC, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_pasn_ephemeral_public_key_len,
+     {"Ephemeral Public Key Length",
+      "wlan.etag.pasn_parameters.ephemeral_public_key_len",
+      FT_UINT8, BASE_DEC, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_tag_pasn_ephemeral_public_key,
+      {"Ephemeral Public Key",
+       "wlan.etag.pasn_parameters.ephemeral_public_key",
+       FT_BYTES, BASE_NONE, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_pasn_auth1_frame_len,
+     {"Auth Frame 1 Length", "wlan.pasn_wrapped_data.auth_frame_1_len",
+      FT_UINT16, BASE_DEC, NULL, 0x0, NULL, HFILL }},
+
+    {&hf_ieee80211_pasn_auth2_frame_len,
+     {"Auth Frame 2 Length", "wlan.pasn_wrapped_data.auth_frame_2_len",
+      FT_UINT16, BASE_DEC, NULL, 0x0, NULL, HFILL }},
   };
 
   static hf_register_info aggregate_fields[] = {
@@ -48399,6 +49750,8 @@ proto_register_ieee80211(void)
     &ett_vht_ndp_annc_sta_info_tree,
     &ett_vht_ndp_annc_sta_list,
 
+    &ett_vht_ranging_annc,
+
     &ett_ff_he_action,
     &ett_ff_protected_he_action,
     &ett_ff_he_mimo_control,
@@ -48427,6 +49780,13 @@ proto_register_ieee80211(void)
     &ett_ff_ftm_toa_err1,
     &ett_tag_ranging,
     &ett_tag_ranging_ntb,
+
+    &ett_rsta_avail_tree,
+    &ett_rsta_avail_subfield,
+
+    &ett_pasn_parameters,
+    &ett_pasn_comeback_tree,
+    &ett_pasn_auth_frame,
 
     &ett_tag_measure_request_mode_tree,
     &ett_tag_measure_request_type_tree,
@@ -48478,6 +49838,8 @@ proto_register_ieee80211(void)
     &ett_tag_neighbor_report_bssid_info_capability_tree,
     &ett_tag_neighbor_report_subelement_tree,
     &ett_tag_neighbor_report_sub_tag_tree,
+
+    &ett_tag_rnr_tbtt_tree,
 
     &ett_tag_wapi_param_set_akm_tree,
     &ett_tag_wapi_param_set_ucast_tree,
@@ -48639,6 +50001,9 @@ proto_register_ieee80211(void)
     &ett_he_ess_report_info_field,
     &ett_he_bss_new_color_info,
     &ett_he_trigger_common_info,
+    &ett_he_trigger_ranging,
+    &ett_he_trigger_ranging_poll,
+    &ett_he_trigger_packet_extension,
     &ett_he_trigger_base_common_info,
     &ett_he_trigger_bar_ctrl,
     &ett_he_trigger_bar_info,

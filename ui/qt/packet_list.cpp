@@ -688,6 +688,7 @@ void PacketList::contextMenuEvent(QContextMenuEvent *event)
     submenu->addAction(window()->findChild<QAction *>("actionAnalyzeFollowHTTPStream"));
     submenu->addAction(window()->findChild<QAction *>("actionAnalyzeFollowHTTP2Stream"));
     submenu->addAction(window()->findChild<QAction *>("actionAnalyzeFollowQUICStream"));
+    submenu->addAction(window()->findChild<QAction *>("actionAnalyzeFollowSIPCall"));
 
     ctx_menu->addSeparator();
 
@@ -800,6 +801,10 @@ void PacketList::mousePressEvent (QMouseEvent *event)
     if (midButton && cap_file_ && packet_list_model_)
     {
         packet_list_model_->toggleFrameMark(QModelIndexList() << curIndex);
+
+        // Make sure the packet list's frame.marked related field text is updated.
+        redrawVisiblePackets();
+
         create_far_overlay_ = true;
         packets_bar_update();
     }
@@ -1590,6 +1595,10 @@ void PacketList::markFrame()
         frames << currentIndex();
 
     packet_list_model_->toggleFrameMark(frames);
+
+    // Make sure the packet list's frame.marked related field text is updated.
+    redrawVisiblePackets();
+
     create_far_overlay_ = true;
     packets_bar_update();
 }
@@ -1599,6 +1608,10 @@ void PacketList::markAllDisplayedFrames(bool set)
     if (!cap_file_ || !packet_list_model_) return;
 
     packet_list_model_->setDisplayedFrameMark(set);
+
+    // Make sure the packet list's frame.marked related field text is updated.
+    redrawVisiblePackets();
+
     create_far_overlay_ = true;
     packets_bar_update();
 }

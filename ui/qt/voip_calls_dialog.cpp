@@ -66,13 +66,16 @@ VoipCallsDialog::VoipCallsDialog(QWidget &parent, CaptureFile &cf, bool all_flow
     ui->callTreeView->sortByColumn(VoipCallsInfoModel::StartTime, Qt::AscendingOrder);
     setWindowSubtitle(all_flows ? tr("SIP Flows") : tr("VoIP Calls"));
 
-    sequence_button_ = ui->buttonBox->addButton(tr("Flow Sequence"), QDialogButtonBox::ActionRole);
-    prepare_button_ = ui->buttonBox->addButton(tr("Prepare Filter"), QDialogButtonBox::ActionRole);
-    player_button_ = RtpPlayerDialog::addPlayerButton(ui->buttonBox);
+    sequence_button_ = ui->buttonBox->addButton(ui->actionFlowSequence->text(), QDialogButtonBox::ActionRole);
+    sequence_button_->setToolTip(ui->actionFlowSequence->toolTip());
+    prepare_button_ = ui->buttonBox->addButton(ui->actionPrepareFilter->text(), QDialogButtonBox::ActionRole);
+    prepare_button_->setToolTip(ui->actionPrepareFilter->toolTip());
+    player_button_ = RtpPlayerDialog::addPlayerButton(ui->buttonBox, this);
 
     connect (ui->todCheckBox, &QAbstractButton::toggled, this, &VoipCallsDialog::switchTimeOfDay);
 
-    copy_button_ = ui->buttonBox->addButton(tr("Copy"), QDialogButtonBox::ActionRole);
+    copy_button_ = ui->buttonBox->addButton(ui->actionCopyButton->text(), QDialogButtonBox::ActionRole);
+    copy_button_->setToolTip(ui->actionCopyButton->toolTip());
     QMenu *copy_menu = new QMenu(copy_button_);
     QAction *ca;
     ca = copy_menu->addAction(tr("as CSV"));
@@ -201,10 +204,7 @@ void VoipCallsDialog::contextMenuEvent(QContextMenuEvent *event)
     QMenu popupMenu;
     QAction *action;
 
-    QMenu *selection_menu = popupMenu.addMenu(tr("Select"));
-    selection_menu->addAction(ui->actionSelectAll);
-    selection_menu->addAction(ui->actionSelectNone);
-    selection_menu->addAction(ui->actionSelectInvert);
+    popupMenu.addMenu(ui->menuSelect);
     action = popupMenu.addAction(tr("Display time as time of day"), this, SLOT(switchTimeOfDay()));
     action->setCheckable(true);
     action->setChecked(call_infos_model_->timeOfDay());
@@ -374,9 +374,6 @@ void VoipCallsDialog::updateWidgets()
     sequence_button_->setEnabled(enable);
 #if defined(QT_MULTIMEDIA_LIB)
     player_button_->setEnabled(enable);
-#else
-    player_button_->setEnabled(false);
-    player_button_->setText(tr("No Audio"));
 #endif
 
     WiresharkDialog::updateWidgets();
@@ -534,18 +531,20 @@ void VoipCallsDialog::showSequence()
     }
 
     SequenceDialog *sequence_dialog = new SequenceDialog(parent_, cap_file_, sequence_info_);
-    connect(sequence_dialog, SIGNAL(selectRtpStream(rtpstream_id_t *)), this, SLOT(selectRtpStreamPassIn(rtpstream_id_t *)));
-    connect(sequence_dialog, SIGNAL(deselectRtpStream(rtpstream_id_t *)), this, SLOT(deselectRtpStreamPassIn(rtpstream_id_t *)));
-    connect(sequence_dialog, SIGNAL(openRtpStreamDialog()), this, SLOT(openRtpStreamDialogPassIn()));
+    // Bypass this dialog and forward signals to parent
+    connect(sequence_dialog, SIGNAL(rtpStreamsDialogSelectRtpStream(rtpstream_id_t *)), &parent_, SLOT(rtpStreamsDialogSelectRtpStream(rtpstream_id_t *)));
+    connect(sequence_dialog, SIGNAL(rtpStreamsDialogDeselectRtpStream(rtpstream_id_t *)), &parent_, SLOT(rtpStreamsDialogDeselectRtpStream(rtpstream_id_t *)));
+    connect(sequence_dialog, SIGNAL(rtpPlayerDialogReplaceRtpStreams(QVector<rtpstream_info_t *>)), &parent_, SLOT(rtpPlayerDialogReplaceRtpStreams(QVector<rtpstream_info_t *>)));
+    connect(sequence_dialog, SIGNAL(rtpPlayerDialogAddRtpStreams(QVector<rtpstream_info_t *>)), &parent_, SLOT(rtpPlayerDialogAddRtpStreams(QVector<rtpstream_info_t *>)));
+    connect(sequence_dialog, SIGNAL(rtpPlayerDialogRemoveRtpStreams(QVector<rtpstream_info_t *>)), &parent_, SLOT(rtpPlayerDialogRemoveRtpStreams(QVector<rtpstream_info_t *>)));
     sequence_dialog->setAttribute(Qt::WA_DeleteOnClose);
+    sequence_dialog->enableVoIPFeatures();
     sequence_dialog->show();
 }
 
-void VoipCallsDialog::showPlayer()
+QVector<rtpstream_info_t *>VoipCallsDialog::getSelectedRtpStreams()
 {
-#ifdef QT_MULTIMEDIA_LIB
-    RtpPlayerDialog *rtp_player_dialog = new RtpPlayerDialog(*this, cap_file_);
-
+    QVector<rtpstream_info_t *> stream_infos;
     foreach (QModelIndex index, ui->callTreeView->selectionModel()->selectedIndexes()) {
         voip_calls_info_t *vci = VoipCallsInfoModel::indexToCallInfo(index);
         if (!vci) continue;
@@ -559,18 +558,33 @@ void VoipCallsDialog::showPlayer()
             //                rsi->call_num, rsi->start_fd->num, rsi->setup_frame_number);
             if (vci->call_num == static_cast<guint>(rsi->call_num)) {
                 //VOIP_CALLS_DEBUG("adding call number %u", vci->call_num);
-                rtp_player_dialog->addRtpStream(rsi);
+                stream_infos << rsi;
             }
         }
     }
 
-    connect(rtp_player_dialog, SIGNAL(goToPacket(int)), this, SIGNAL(goToPacket(int)));
+    return stream_infos;
+}
 
-    rtp_player_dialog->setWindowModality(Qt::ApplicationModal);
-    rtp_player_dialog->setAttribute(Qt::WA_DeleteOnClose);
-    rtp_player_dialog->setMarkers();
-    rtp_player_dialog->show();
-#endif // QT_MULTIMEDIA_LIB
+void VoipCallsDialog::rtpPlayerReplace()
+{
+    if (ui->callTreeView->selectionModel()->selectedIndexes().count() < 1) return;
+
+    emit rtpPlayerDialogReplaceRtpStreams(getSelectedRtpStreams());
+}
+
+void VoipCallsDialog::rtpPlayerAdd()
+{
+    if (ui->callTreeView->selectionModel()->selectedIndexes().count() < 1) return;
+
+    emit rtpPlayerDialogAddRtpStreams(getSelectedRtpStreams());
+}
+
+void VoipCallsDialog::rtpPlayerRemove()
+{
+    if (ui->callTreeView->selectionModel()->selectedIndexes().count() < 1) return;
+
+    emit rtpPlayerDialogRemoveRtpStreams(getSelectedRtpStreams());
 }
 
 QList<QVariant> VoipCallsDialog::streamRowData(int row) const
@@ -646,8 +660,6 @@ void VoipCallsDialog::on_buttonBox_clicked(QAbstractButton *button)
         prepareFilter();
     } else if (button == sequence_button_) {
         showSequence();
-    } else if (button == player_button_) {
-        showPlayer();
     }
 }
 
@@ -694,21 +706,6 @@ void VoipCallsDialog::switchTimeOfDay()
     call_infos_model_->setTimeOfDay(checked);
     ui->callTreeView->resizeColumnToContents(VoipCallsInfoModel::StartTime);
     ui->callTreeView->resizeColumnToContents(VoipCallsInfoModel::StopTime);
-}
-
-void VoipCallsDialog::selectRtpStreamPassIn(rtpstream_id_t *id)
-{
-    emit selectRtpStreamPassOut(id);
-}
-
-void VoipCallsDialog::deselectRtpStreamPassIn(rtpstream_id_t *id)
-{
-    emit deselectRtpStreamPassOut(id);
-}
-
-void VoipCallsDialog::openRtpStreamDialogPassIn()
-{
-    emit openRtpStreamDialogPassOut();
 }
 
 void VoipCallsDialog::displayFilterSuccess(bool success)

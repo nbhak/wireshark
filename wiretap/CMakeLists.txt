@@ -173,6 +173,9 @@ set_target_properties(wiretap PROPERTIES
 	FOLDER "DLLs"
 	INSTALL_RPATH "${LIBRARY_INSTALL_RPATH}"
 )
+if(MSVC)
+	set_target_properties(wiretap PROPERTIES LINK_FLAGS_DEBUG "${WS_MSVC_DEBUG_LINK_FLAGS}")
+endif()
 
 target_link_libraries(wiretap
 	PUBLIC
@@ -185,6 +188,10 @@ target_link_libraries(wiretap
 target_include_directories(wiretap SYSTEM
 	PRIVATE
 		${ZLIB_INCLUDE_DIRS}
+)
+
+target_include_directories(wiretap PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
 install(TARGETS wiretap

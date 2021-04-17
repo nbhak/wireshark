@@ -880,11 +880,11 @@
     </message>
     <message>
         <source>Unknown file type returned by save as dialog.</source>
-        <translation type="unfinished"></translation>
+        <translation>…として保存画面から返された未知のファイルタイプ</translation>
     </message>
     <message>
         <source>Please report this as a Wireshark issue at https://gitlab.com/wireshark/wireshark/-/issues.</source>
-        <translation type="unfinished"></translation>
+        <translation>どうかこれをWiresharkの問題として以下に報告ください。https://gitlab.com/wireshark/wireshark/-/issues</translation>
     </message>
     <message>
         <source>directory</source>
@@ -3200,6 +3200,10 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         </translation>
     </message>
     <message>
+        <source>No streams</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Entire conversation (%1)</source>
         <translation>全体の対話 (%1)</translation>
     </message>
@@ -3341,7 +3345,7 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>Lazy badgers move unique waxy jellyfish packets</source>
-        <translation type="unfinished"></translation>
+        <translation>Geraldさんが作成したpangram すべての文字を１文字使う回文 Lazy badgers move unique waxy jellyfish packets.</translation>
     </message>
     <message>
         <source>Font</source>
@@ -4224,10 +4228,6 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
 <context>
     <name>ImportTextDialog</name>
     <message>
-        <source>Import From</source>
-        <translation>インポート</translation>
-    </message>
-    <message>
         <source>File:</source>
         <translation>ファイル:</translation>
     </message>
@@ -4243,6 +4243,14 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <source>Browse…</source>
         <oldsource>Browse...</oldsource>
         <translation>参照…</translation>
+    </message>
+    <message>
+        <source>Hex Dump</source>
+        <translation type="unfinished">16進数ダンプ形式</translation>
+    </message>
+    <message>
+        <source>Import a standard hex dump as exported by Wireshark</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Offsets in the text file are in octal notation</source>
@@ -4273,6 +4281,58 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>10進数</translation>
     </message>
     <message>
+        <source>Regular Expression</source>
+        <translation type="unfinished">正規表現</translation>
+    </message>
+    <message>
+        <source>Import a file formatted according to a custom regular expression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Packet format regular expression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Perl compatible regular expression capturing a single packet in the file with named groups identifieing data to import. Anchors ^ and $ also match before/after newlines &lt;/p&gt;&lt;p&gt;Required is only a data group, also supported are time, dir and seqno.&lt;/p&gt;&lt;p&gt;Regex flags: DUPNAMES, MULTILINE and NOEMPTY&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is regexHintLabel, it will be set to default_regex_hint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data encoding:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How data is encoded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;small&gt;&lt;i&gt;reccomended regex:&lt;/small&gt;&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>encodingRegexExample</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List of characters indicating incoming packets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>iI&lt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List of characters indicating outgoing packets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>oO&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Timestamp format:</source>
         <translation>タイムスタンプ形式:</translation>
     </message>
@@ -4287,10 +4347,6 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     <message>
         <source>ExportPDU</source>
         <translation>エキスポートPDU</translation>
-    </message>
-    <message>
-        <source>Payload</source>
-        <translation>ペイロード</translation>
     </message>
     <message>
         <source>Maximum frame length:</source>
@@ -4313,12 +4369,28 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>テキストファイルのタイムスタンプを解析する形式（例 %H:%M:%S） 形式の仕様はstrptime(3)に基づきます</translation>
     </message>
     <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The format in which to parse timestamps in the text file (e.g. %H:%M:%S.%f).&lt;/p&gt;&lt;p&gt;Format specifiers are based on strptime(3) with the addition of %f for second fractions. The percision of %f is determined from it&apos;s length.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%H:%M:%S.%f</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>timestampExampleLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Encapsulation Type:</source>
         <translation>カプセル化種別:</translation>
     </message>
     <message>
         <source>Encapsulation type of the frames in the import capture file</source>
         <translation>インポートしたキャプチャファイルのフレームのカプセル化の種別</translation>
+    </message>
+    <message>
+        <source>Dissector</source>
+        <translation type="unfinished">ダイセクタ</translation>
     </message>
     <message>
         <source>The UDP, TCP or SCTP source port for each frame</source>
@@ -4425,8 +4497,20 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>IPv4</translation>
     </message>
     <message>
+        <source>The dissector to use for each frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>The maximum size of the frames to write to the import capture file (max 256kiB)</source>
         <translation>インポートするキャプチャファイルへ書き込む最大のフレームサイズ（最大256kB)</translation>
+    </message>
+    <message>
+        <source>Supported fields are data, dir, time, seqno</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missing capturing group data (use (?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Import From Hex Dump</source>
@@ -4439,18 +4523,6 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     <message>
         <source>Import Text File</source>
         <translation>テキストファイルをインポート</translation>
-    </message>
-    <message>
-        <source>Example: %1</source>
-        <translation>例: %1</translation>
-    </message>
-    <message>
-        <source>&lt;i&gt;(Wrong date format)&lt;/i&gt;</source>
-        <translation>&lt;i&gt;(誤ったデータ形式)&lt;/i&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;i&gt;(No format will be applied)&lt;/i&gt;</source>
-        <translation>&lt;i&gt;(どの形式も適用されません)&lt;/i&gt;</translation>
     </message>
 </context>
 <context>
@@ -5541,7 +5613,7 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>MAC Statistics</source>
-        <translation type="unfinished">MAC統計</translation>
+        <translation>MAC統計</translation>
     </message>
 </context>
 <context>
@@ -5961,7 +6033,7 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>RLC Statistics</source>
-        <translation type="unfinished">RLC統計</translation>
+        <translation>RLC統計</translation>
     </message>
 </context>
 <context>
@@ -6535,6 +6607,10 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>対話フィルタ</translation>
     </message>
     <message>
+        <source>Reliable Server Pooling (RSerPool)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Osmux</source>
         <translation>Osmux</translation>
     </message>
@@ -6553,7 +6629,7 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>FAQs</source>
-        <translation type="unfinished"></translation>
+        <translation>FAQ&apos;s</translation>
     </message>
     <message>
         <source>Next Packet in Conversation</source>
@@ -6835,7 +6911,7 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>DCCP Stream</source>
-        <translation type="unfinished"></translation>
+        <translation>DCCPストリーム</translation>
     </message>
     <message>
         <source>TLS Stream</source>
@@ -6852,6 +6928,10 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     <message>
         <source>QUIC Stream</source>
         <translation>QUIC ストリーム</translation>
+    </message>
+    <message>
+        <source>SIP Call</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Time Sequence (tcptrace)</source>
@@ -7184,6 +7264,14 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     <message>
         <source>Display Filter Expression…</source>
         <translation>表示フィルタ式...</translation>
+    </message>
+    <message>
+        <source>REGISTER_STAT_GROUP_RSERPOOL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start of &quot;REGISTER_STAT_GROUP_RSERPOOL&quot;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>No GSM statistics registered</source>
@@ -7943,15 +8031,15 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>Unknown file type returned by merge dialog.</source>
-        <translation type="unfinished"></translation>
+        <translation>結合画面から返された未知のファイルタイプ</translation>
     </message>
     <message>
         <source>Please report this as a Wireshark issue at https://gitlab.com/wireshark/wireshark/-/issues.</source>
-        <translation type="unfinished"></translation>
+        <translation>どうかこれをWiresharkの問題として以下に報告ください。https://gitlab.com/wireshark/wireshark/-/issues</translation>
     </message>
     <message>
         <source>Unknown file type returned by export dialog.</source>
-        <translation type="unfinished"></translation>
+        <translation>エクスポート画面から返された未知のファイルタイプ</translation>
     </message>
     <message>
         <source>Do you want to stop the capture and save the captured packets%1?</source>
@@ -8954,6 +9042,14 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>パケットごとに新ページで印刷</translation>
     </message>
     <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Print capture file information on each page&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capture information header</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use the &amp;quot;+&amp;quot; and &amp;quot;-&amp;quot; keys to zoom the preview in and out. Use the &amp;quot;0&amp;quot; key to reset the zoom level.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&quot;+&quot;キーと &quot;-&quot;キーでプレビューをズームします &quot;0&quot;キーでズームをリセットします &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -9329,7 +9425,7 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>Copied </source>
-        <translation type="unfinished"></translation>
+        <translation>コピー済</translation>
     </message>
     <message>
         <source>Wiki Page for %1</source>
@@ -10287,11 +10383,11 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;Forward&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;Reverse&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>dium; font-weight:600;&quot;&gt;進む&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;戻る&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">dium; font-weight:600;&quot;&gt;進む&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:medium; font-weight:600;&quot;&gt;戻る&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Forward</source>
-        <translation>進む</translation>
+        <translation type="vanished">進む</translation>
     </message>
     <message>
         <source>Packet</source>
@@ -10327,8 +10423,64 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>状態</translation>
     </message>
     <message>
+        <source>Stream %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stream %1 Jitter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stream %1 Difference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stream %1 Delta</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save one stream CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save all stream&apos;s CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Analyze</source>
+        <translation type="unfinished">分析(&amp;A)</translation>
+    </message>
+    <message>
+        <source>Open the analysis window for the selected stream(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Replace existing list in RTP Analysis Dialog with new one</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Add to list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add new set to existing list in RTP Analysis Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Remove from playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected streams from list in RTP Analysis Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Reverse</source>
-        <translation>反転</translation>
+        <translation type="vanished">反転</translation>
     </message>
     <message>
         <source>Graph</source>
@@ -10336,132 +10488,140 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show or hide forward jitter values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;順方向ジッタ値を表示もしくは非表示にします&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;順方向ジッタ値を表示もしくは非表示にします&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Forward Jitter</source>
-        <translation>順方向ジッタ</translation>
+        <translation type="vanished">順方向ジッタ</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show or hide forward difference values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;順方向差異の値を表示もしくは非表示にします&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;順方向差異の値を表示もしくは非表示にします&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Forward Difference</source>
-        <translation>順方向の差異</translation>
+        <translation type="vanished">順方向の差異</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show or hide forward delta values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;順方向間隔の値を表示もしくは非表示にします&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;順方向間隔の値を表示もしくは非表示にします&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Forward Delta</source>
-        <translation>順方向の間隔</translation>
+        <translation type="vanished">順方向の間隔</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show or hide reverse jitter values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;逆方向ジッタ値を表示もしくは非表示にします&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;逆方向ジッタ値を表示もしくは非表示にします&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Reverse Jitter</source>
-        <translation>逆方向ジッタ</translation>
+        <translation type="vanished">逆方向ジッタ</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show or hide reverse difference values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;逆方向の差異の値を表示もしくは非表示にします&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;逆方向の差異の値を表示もしくは非表示にします&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Reverse Difference</source>
-        <translation>逆方向の差異</translation>
+        <translation type="vanished">逆方向の差異</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show or hide reverse delta values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;逆方向の間隔値を表示もしくは非表示にします&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;逆方向の間隔値を表示もしくは非表示にします&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Reverse Delta</source>
-        <translation>逆方向の間隔</translation>
+        <translation type="vanished">逆方向の間隔</translation>
     </message>
     <message>
         <source>&lt;small&gt;&lt;i&gt;A hint.&lt;/i&gt;&lt;/small&gt;</source>
         <translation>lt;small&gt;&lt;i&gt;ヒント&lt;/i&gt;&lt;/small&gt;</translation>
     </message>
     <message>
+        <source>&amp;Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open export menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Unsynchronized Forward and Reverse Audio</source>
-        <translation>非同期の順方向と逆方向の音声</translation>
+        <translation type="vanished">非同期の順方向と逆方向の音声</translation>
     </message>
     <message>
         <source>Stream Synchronized Forward and Reverse Audio</source>
-        <translation>順方向と逆方向の同期された音声ストリーム</translation>
+        <translation type="vanished">順方向と逆方向の同期された音声ストリーム</translation>
     </message>
     <message>
         <source>Save the audio data for both channels synchronized to start of earlier stream.</source>
-        <translation>より前のストリームの開始に同期された両方のチャンネルの音声データを保存</translation>
+        <translation type="vanished">より前のストリームの開始に同期された両方のチャンネルの音声データを保存</translation>
     </message>
     <message>
         <source>Stream Synchronized Forward Stream Audio</source>
-        <translation>順方向の音声ストリームに同期されたストリーム</translation>
+        <translation type="vanished">順方向の音声ストリームに同期されたストリーム</translation>
     </message>
     <message>
         <source>Save the forward stream audio data synchronized to start of earlier stream.</source>
-        <translation>より前のストリームの開始に同期された順方向ストリーム音声データを保存</translation>
+        <translation type="vanished">より前のストリームの開始に同期された順方向ストリーム音声データを保存</translation>
     </message>
     <message>
         <source>Stream Synchronized Reverse Stream Audio</source>
-        <translation>逆方向の音声ストリームに同期されたストリーム</translation>
+        <translation type="vanished">逆方向の音声ストリームに同期されたストリーム</translation>
     </message>
     <message>
         <source>Save the reverse stream audio data synchronized to start of earlier stream.</source>
-        <translation>より前のストリームの開始に同期された逆方向ストリーム音声データを保存</translation>
+        <translation type="vanished">より前のストリームの開始に同期された逆方向ストリーム音声データを保存</translation>
     </message>
     <message>
         <source>File Synchronized Forward and Reverse Audio</source>
-        <translation>同期された順方向と逆方向の音声ファイル</translation>
+        <translation type="vanished">同期された順方向と逆方向の音声ファイル</translation>
     </message>
     <message>
         <source>Save the audio data for both channels synchronized to start of file.</source>
-        <translation>ファイルの開始に同期された両方のチャンネルの音声データを保存</translation>
+        <translation type="vanished">ファイルの開始に同期された両方のチャンネルの音声データを保存</translation>
     </message>
     <message>
         <source>File Synchronized Forward Stream Audio</source>
-        <translation>同期された順方向の音声ストリームファイル</translation>
+        <translation type="vanished">同期された順方向の音声ストリームファイル</translation>
     </message>
     <message>
         <source>Save the forward stream audio data synchronized to start of file.</source>
-        <translation>ファイルの開始に同期された順方向ストリーム音声データを保存</translation>
+        <translation type="vanished">ファイルの開始に同期された順方向ストリーム音声データを保存</translation>
     </message>
     <message>
         <source>File Synchronized Reverse Stream Audio</source>
-        <translation>逆方向音声ストリームに同期されたファイル</translation>
+        <translation type="vanished">逆方向音声ストリームに同期されたファイル</translation>
     </message>
     <message>
         <source>Save the reverse stream audio data synchronized to start of file.</source>
-        <translation>ファイルの開始に同期された逆方向ストリーム音声データを保存</translation>
+        <translation type="vanished">ファイルの開始に同期された逆方向ストリーム音声データを保存</translation>
     </message>
     <message>
         <source>Save the unsynchronized audio data for both channels.</source>
         <oldsource>Save the audio data for both channels.</oldsource>
-        <translation>両方のチャンネルの非同期の音声データを保存</translation>
+        <translation type="vanished">両方のチャンネルの非同期の音声データを保存</translation>
     </message>
     <message>
         <source>Unsynchronized Forward Stream Audio</source>
         <oldsource>Forward Stream Audio</oldsource>
-        <translation>非同期の順方向音声ストリーム</translation>
+        <translation type="vanished">非同期の順方向音声ストリーム</translation>
     </message>
     <message>
         <source>Save the unsynchronized forward stream audio data.</source>
         <oldsource>Save the forward stream audio data.</oldsource>
-        <translation>非同期の順方向音声ストリームデータを保存</translation>
+        <translation type="vanished">非同期の順方向音声ストリームデータを保存</translation>
     </message>
     <message>
         <source>Unsynchronized Reverse Stream Audio</source>
         <oldsource>Reverse Stream Audio</oldsource>
-        <translation>非同期の逆方向音声ストリーム</translation>
+        <translation type="vanished">非同期の逆方向音声ストリーム</translation>
     </message>
     <message>
         <source>Save the unsynchronized reverse stream audio data.</source>
         <oldsource>Save the reverse stream audio data.</oldsource>
-        <translation>非同期の逆方向音声ストリームデータを保存</translation>
+        <translation type="vanished">非同期の逆方向音声ストリームデータを保存</translation>
     </message>
     <message>
         <source>CSV</source>
@@ -10469,23 +10629,43 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>Save both tables as CSV.</source>
-        <translation>両方の表をCSVとして保存します</translation>
+        <translation type="vanished">両方の表をCSVとして保存します</translation>
     </message>
     <message>
         <source>Forward Stream CSV</source>
-        <translation>順方向のストリームCSV</translation>
+        <translation type="vanished">順方向のストリームCSV</translation>
     </message>
     <message>
         <source>Save the forward table as CSV.</source>
-        <translation>順方向の表をCSVとして保存します</translation>
+        <translation type="vanished">順方向の表をCSVとして保存します</translation>
     </message>
     <message>
         <source>Reverse Stream CSV</source>
-        <translation>逆方向のストリームCSV</translation>
+        <translation type="vanished">逆方向のストリームCSV</translation>
     </message>
     <message>
         <source>Save the reverse table as CSV.</source>
-        <translation>逆方向のテーブルをCSVとして保存します</translation>
+        <translation type="vanished">逆方向のテーブルをCSVとして保存します</translation>
+    </message>
+    <message>
+        <source>Save tables as CSV.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current Tab Stream CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save the table on the current tab as CSV.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Tab Streams CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save the table from all tabs as CSV.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save Graph</source>
@@ -10525,11 +10705,7 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>Unable to save RTP data.</source>
-        <translation>RTPデータを保存することができません</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="unfinished">エクスポート</translation>
+        <translation type="vanished">RTPデータを保存することができません</translation>
     </message>
     <message>
         <source>Save Graph As…</source>
@@ -10537,47 +10713,47 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>Can&apos;t synchronize when only one channel is selected</source>
-        <translation>1つのチャンネルだけ選択されたときは同期できません</translation>
+        <translation type="vanished">1つのチャンネルだけ選択されたときは同期できません</translation>
     </message>
     <message>
         <source>None of channels was selected</source>
-        <translation>チャンネルが何も選択されていませんでした</translation>
+        <translation type="vanished">チャンネルが何も選択されていませんでした</translation>
     </message>
     <message>
         <source>Save forward and reverse stream audio</source>
-        <translation>順方向と逆方向の音声ストリームを保存</translation>
+        <translation type="vanished">順方向と逆方向の音声ストリームを保存</translation>
     </message>
     <message>
         <source>Raw (*.raw)</source>
-        <translation>無加工形式 (*.raw)</translation>
+        <translation type="vanished">無加工形式 (*.raw)</translation>
     </message>
     <message>
         <source>Saving %1…</source>
-        <translation>%1 保存中…</translation>
+        <translation type="vanished">%1 保存中…</translation>
     </message>
     <message>
         <source>Analyzing RTP</source>
-        <translation>RTP解析中</translation>
+        <translation type="vanished">RTP解析中</translation>
     </message>
     <message>
         <source>Information</source>
-        <translation>情報</translation>
+        <translation type="vanished">情報</translation>
     </message>
     <message>
         <source>Save was interrupted</source>
-        <translation>保存は中断されました</translation>
+        <translation type="vanished">保存は中断されました</translation>
     </message>
     <message>
         <source>Save or read of file was failed during saving</source>
-        <translation>保存中のファイルの読み書きは失敗しました</translation>
+        <translation type="vanished">保存中のファイルの読み書きは失敗しました</translation>
     </message>
     <message>
         <source>Codec is not supported, file is incomplete</source>
-        <translation>コーデックはサポートされていません。ファイルは不完全です。</translation>
+        <translation type="vanished">コーデックはサポートされていません。ファイルは不完全です。</translation>
     </message>
     <message>
         <source>Codec rate is not supported, file is incomplete</source>
-        <translation>コーデック速度はサポートされていません。ファイルは不完全です。</translation>
+        <translation type="vanished">コーデック速度はサポートされていません。ファイルは不完全です。</translation>
     </message>
     <message>
         <source>SSRC value not found.</source>
@@ -10585,11 +10761,11 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>No streams found.</source>
-        <translation>ストリームが見つかりませんでした</translation>
+        <translation type="vanished">ストリームが見つかりませんでした</translation>
     </message>
     <message>
         <source>%1 streams found.</source>
-        <translation>%1 ストリームが見つかりました</translation>
+        <translation type="vanished">%1 ストリームが見つかりました</translation>
     </message>
     <message>
         <source> G: Go to packet, N: Next problem packet</source>
@@ -10597,7 +10773,7 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>No Audio</source>
-        <translation>音声がありません</translation>
+        <translation type="vanished">音声がありません</translation>
     </message>
     <message>
         <source>Portable Document Format (*.pdf)</source>
@@ -10617,63 +10793,63 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>Can&apos;t save in a file: Wrong length of captured packets.</source>
-        <translation>ファイルに保存できません: キャプチャしたパケットの長さが違います</translation>
+        <translation type="vanished">ファイルに保存できません: キャプチャしたパケットの長さが違います</translation>
     </message>
     <message>
         <source>Can&apos;t save in a file: RTP data with padding.</source>
-        <translation>ファイルに保存できません: パディングを含むRTPデータ</translation>
+        <translation type="vanished">ファイルに保存できません: パディングを含むRTPデータ</translation>
     </message>
     <message>
         <source>Can&apos;t save in a file: File I/O problem.</source>
-        <translation>ファイルに保存できません: ファイル入出力問題</translation>
+        <translation type="vanished">ファイルに保存できません: ファイル入出力問題</translation>
     </message>
     <message>
         <source>Can&apos;t save in a file: Not all data in all packets was captured.</source>
-        <translation>ファイルに保存できません: 全パケット中すべてでないデータがキャプチャされました</translation>
+        <translation type="vanished">ファイルに保存できません: 全パケット中すべてでないデータがキャプチャされました</translation>
     </message>
     <message>
         <source>Save forward stream audio</source>
-        <translation>順方向ストリーム音声を保存</translation>
+        <translation type="vanished">順方向ストリーム音声を保存</translation>
     </message>
     <message>
         <source>Save reverse stream audio</source>
-        <translation>逆方向ストリーム音声を保存</translation>
+        <translation type="vanished">逆方向ストリーム音声を保存</translation>
     </message>
     <message>
         <source>Sun Audio (*.au)</source>
-        <translation>Sun音声形式 (*.au)</translation>
+        <translation type="vanished">Sun音声形式 (*.au)</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation>警告</translation>
+        <translation type="vanished">警告</translation>
     </message>
     <message>
         <source>Unable to save in that format</source>
-        <translation>その形式では保存できません</translation>
+        <translation type="vanished">その形式では保存できません</translation>
     </message>
     <message>
         <source>Unable to save %1</source>
-        <translation>%1を保存できません</translation>
+        <translation type="vanished">%1を保存できません</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>エラー</translation>
+        <translation type="vanished">エラー</translation>
     </message>
     <message>
         <source>Unknown error occurred</source>
-        <translation>不明なエラーが起きました</translation>
+        <translation type="vanished">不明なエラーが起きました</translation>
     </message>
     <message>
         <source>Save forward stream CSV</source>
-        <translation>順方向ストリームをCSVで保存</translation>
+        <translation type="vanished">順方向ストリームをCSVで保存</translation>
     </message>
     <message>
         <source>Save reverse stream CSV</source>
-        <translation>逆方向のストリームをCSVで保存</translation>
+        <translation type="vanished">逆方向のストリームをCSVで保存</translation>
     </message>
     <message>
         <source>Save CSV</source>
-        <translation>CSVを保存</translation>
+        <translation type="vanished">CSVを保存</translation>
     </message>
     <message>
         <source>Comma-separated values (*.csv)</source>
@@ -10743,7 +10919,7 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>Sample Rate (Hz)</source>
-        <translation>サンプリングレート(Hz)</translation>
+        <translation type="vanished">サンプリングレート(Hz)</translation>
     </message>
     <message>
         <source>Payloads</source>
@@ -10756,6 +10932,10 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     <message>
         <source>Output Device:</source>
         <translation>出力デバイス:</translation>
+    </message>
+    <message>
+        <source>Output Audio Rate:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Jitter Buffer:</source>
@@ -10807,6 +10987,38 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>時刻</translation>
     </message>
     <message>
+        <source>&amp;Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export audio of all unmuted selected channels or export payload of one channel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Stream Synchronized Audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save audio data synchronized to start of the earliest stream.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;File Synchronized Audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save audio data synchronized to start of the capture file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Payload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save RTP payload of selected stream.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Reset Graph</source>
         <translation>グラフをリセット</translation>
     </message>
@@ -10816,31 +11028,31 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>Go To Setup Packet</source>
-        <translation type="unfinished"></translation>
+        <translation>セットアップパケットに移動</translation>
     </message>
     <message>
         <source>Go to setup packet of stream currently under the cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>現在カーソル位置のストリームのセットアップパケットに移動します</translation>
     </message>
     <message>
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>ミュート</translation>
     </message>
     <message>
         <source>Mute selected streams</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したストリームをミュート</translation>
     </message>
     <message>
         <source>Unmute</source>
-        <translation type="unfinished"></translation>
+        <translation>ミュート解除</translation>
     </message>
     <message>
         <source>Unmute selected streams</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したストリームをミュート解除</translation>
     </message>
     <message>
         <source>Invert muting of selected streams</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したストリームをミュート・ミュート解除</translation>
     </message>
     <message>
         <source>Route audio to left channel of selected streams</source>
@@ -10907,6 +11119,22 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>拡大</translation>
     </message>
     <message>
+        <source>SR (Hz)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sample rate of codec</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PR (Hz)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play rate of decoded audio (depends e. g. on selected sound card)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Zoom Out</source>
         <translation>縮小</translation>
     </message>
@@ -10967,8 +11195,40 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Play Streams</source>
-        <translation>ストリームを再生</translation>
+        <source>&amp;Play Streams</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open RTP player dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Replace existing playlist in RTP Player with new one</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Add to playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add new set to existing playlist in RTP Player</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Remove from playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove selected streams from playlist in RTP Player</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Audio</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Decoding streams...</source>
@@ -10989,6 +11249,62 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     <message>
         <source>Inserted Silence</source>
         <translation>無音が挿入されている</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WAV (*.wav)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sun Audio (*.au)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save audio</source>
+        <translation type="unfinished">音声を保存</translation>
+    </message>
+    <message>
+        <source>Raw (*.raw)</source>
+        <translation type="unfinished">無加工形式 (*.raw)</translation>
+    </message>
+    <message>
+        <source>Save payload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">警告</translation>
+    </message>
+    <message>
+        <source>No stream selected or none of selected streams provide audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished">エラー</translation>
+    </message>
+    <message>
+        <source>All selected streams must use same play rate. Manual set of Output Audio Rate might help.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save failed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t write header of AU file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t write header of WAV file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Payload save works with just one audio stream.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Double click to change audio routing</source>
@@ -11090,8 +11406,20 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation type="unfinished">時刻</translation>
     </message>
     <message>
-        <source>Find Reverse</source>
-        <translation>逆方向を検索</translation>
+        <source>Find &amp;Reverse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prepare &amp;Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Analyze</source>
+        <translation type="unfinished">分析(&amp;A)</translation>
     </message>
     <message>
         <source>Find the reverse stream matching the selected forward stream.</source>
@@ -11138,14 +11466,6 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select None</source>
-        <translation type="vanished">選択なし</translation>
-    </message>
-    <message>
-        <source>Undo stream selection.</source>
-        <translation type="vanished">ストリームの選択を取消します</translation>
-    </message>
-    <message>
         <source>Go To Setup</source>
         <translation>セットアップに移動</translation>
     </message>
@@ -11158,20 +11478,12 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>G</translation>
     </message>
     <message>
-        <source>Prepare Filter</source>
-        <translation>フィルタを準備</translation>
-    </message>
-    <message>
         <source>Prepare a filter matching the selected stream(s).</source>
         <translation>選択したストリームに合致するフィルタを準備します</translation>
     </message>
     <message>
         <source>P</source>
         <translation>P</translation>
-    </message>
-    <message>
-        <source>Export As RTPDump</source>
-        <translation>RTPDumpとしてエクスポート</translation>
     </message>
     <message>
         <source>Export the stream payload as rtpdump</source>
@@ -11182,12 +11494,21 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>E</translation>
     </message>
     <message>
-        <source>Analyze</source>
-        <translation>分析</translation>
+        <source>Open the analysis window for the selected stream(s) and add it to it</source>
+        <oldsource>Open the analysis window for the selected stream(s)</oldsource>
+        <translation type="unfinished">選択したストリームに対して分析ウインドウを開きます</translation>
     </message>
     <message>
-        <source>Open the analysis window for the selected stream(s)</source>
-        <translation>選択したストリームに対して分析ウインドウを開きます</translation>
+        <source>A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cop&amp;y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open copy menu</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copy as CSV</source>
@@ -11210,20 +11531,8 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>RTPストリーム</translation>
     </message>
     <message>
-        <source>Export…</source>
-        <translation type="vanished">エクスポート…</translation>
-    </message>
-    <message>
         <source>Select</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>コピー</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="unfinished">エクスポート</translation>
     </message>
     <message>
         <source>as CSV</source>
@@ -11240,10 +11549,6 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     <message>
         <source>, %1 selected, %2 total packets</source>
         <translation>, %1 選択, %2 全パケット</translation>
-    </message>
-    <message>
-        <source>No Audio</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save RTPDump As…</source>
@@ -12086,14 +12391,6 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>コメント</translation>
     </message>
     <message>
-        <source>Save As…</source>
-        <translation type="vanished">...として保存</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="unfinished">エクスポート</translation>
-    </message>
-    <message>
         <source>No data</source>
         <translation>データなし</translation>
     </message>
@@ -12242,12 +12539,32 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>ダイアグラムをリセット</translation>
     </message>
     <message>
+        <source>Reset &amp;Diagram</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Reset the diagram to its initial state.</source>
         <translation>ダイアグラムを初期状態にリセットします</translation>
     </message>
     <message>
         <source>0</source>
         <translation>0</translation>
+    </message>
+    <message>
+        <source>&amp;Reset Diagram</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset the diagram to its initial state</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export diagram</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Zoom In</source>
@@ -13543,6 +13860,30 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>時刻</translation>
     </message>
     <message>
+        <source>Flow &amp;Sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show flow sequence for selected call(s).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prepare &amp;Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prepare a filter matching the selected calls(s).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cop&amp;y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open copy menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13561,18 +13902,6 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     <message>
         <source>Invert selection</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select &amp;All</source>
-        <translation type="vanished">すべてを選択(&amp;A)</translation>
-    </message>
-    <message>
-        <source>Select all calls</source>
-        <translation type="vanished">すべての通話を選択します</translation>
-    </message>
-    <message>
-        <source>Select &amp;None</source>
-        <translation type="vanished">選択なし(&amp;N)</translation>
     </message>
     <message>
         <source>Clear selection</source>
@@ -13607,18 +13936,6 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
         <translation>VoIP通話</translation>
     </message>
     <message>
-        <source>Prepare Filter</source>
-        <translation>フィルタを準備</translation>
-    </message>
-    <message>
-        <source>Flow Sequence</source>
-        <translation>フロー順序</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>コピー</translation>
-    </message>
-    <message>
         <source>as CSV</source>
         <translation>CSVとして</translation>
     </message>
@@ -13632,7 +13949,7 @@ For example, use 1 hour to have a new file created every hour on the hour.</sour
     </message>
     <message>
         <source>No Audio</source>
-        <translation>音声なし</translation>
+        <translation type="vanished">音声なし</translation>
     </message>
 </context>
 <context>

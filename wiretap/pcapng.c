@@ -23,6 +23,7 @@
 
 #include <wsutil/ws_printf.h>
 #include <wsutil/strtoi.h>
+#include <wsutil/glib-compat.h>
 
 #include "wtap-int.h"
 #include "file_wrappers.h"
@@ -130,9 +131,13 @@ typedef struct pcapng_name_resolution_block_s {
 
 /*
  * Minimum Sysdig size = minimum block size + packed size of sysdig_event_phdr.
+ * Minimum Sysdig event v2 header size = minimum block size + packed size of sysdig_event_v2_phdr (which, in addition
+ * to sysdig_event_phdr, includes the nparams 32bit value).
  */
 #define SYSDIG_EVENT_HEADER_SIZE ((16 + 64 + 64 + 32 + 16)/8) /* CPU ID + TS + TID + Event len + Event type */
 #define MIN_SYSDIG_EVENT_SIZE    ((guint32)(MIN_BLOCK_SIZE + SYSDIG_EVENT_HEADER_SIZE))
+#define SYSDIG_EVENT_V2_HEADER_SIZE ((16 + 64 + 64 + 32 + 16 + 32)/8) /* CPU ID + TS + TID + Event len + Event type + nparams */
+#define MIN_SYSDIG_EVENT_V2_SIZE    ((guint32)(MIN_BLOCK_SIZE + SYSDIG_EVENT_V2_HEADER_SIZE))
 
 /*
  * We require __REALTIME_TIMESTAMP in the Journal Export Format reader in
@@ -280,6 +285,7 @@ register_pcapng_block_type_handler(guint block_type, block_reader reader,
     case BLOCK_TYPE_EPB:
     case BLOCK_TYPE_DSB:
     case BLOCK_TYPE_SYSDIG_EVENT:
+    case BLOCK_TYPE_SYSDIG_EVENT_V2:
     case BLOCK_TYPE_SYSTEMD_JOURNAL:
         /*
          * Yes; we already handle it, and don't allow a replacement to
@@ -437,6 +443,7 @@ get_block_type_index(guint block_type, guint *bt_index)
             break;
 
         case BLOCK_TYPE_SYSDIG_EVENT:
+        case BLOCK_TYPE_SYSDIG_EVENT_V2:
         /* case BLOCK_TYPE_SYSDIG_EVF: */
             *bt_index = BT_INDEX_EVT;
             break;
@@ -572,7 +579,7 @@ pcapng_process_string_option(wtapng_block_t *wblock,
          * will fail on the second and later occurrences of the option;
          * we silently ignore the failure.
          */
-        wtap_block_add_string_option(wblock->block, ohp->option_code, option_content, ohp->option_length);
+        wtap_block_add_string_option(wblock->block, ohp->option_code, (const char *)option_content, ohp->option_length);
     }
 }
 
@@ -765,8 +772,22 @@ pcapng_read_section_header_block(FILE_T fh, pcapng_block_header_t *bh,
         return PCAPNG_BLOCK_ERROR;
     }
 
-    /* we currently only understand SHB V1.0 */
-    if (version_major != 1 || version_minor > 0) {
+    /* Currently only SHB versions 1.0 and 1.2 are supported;
+       version 1.2 is treated as being the same as version 1.0.
+       See the current version of the pcapng specification.
+
+       Version 1.2 is written by some programs that write additional
+       block types (which can be read by any code that handles them,
+       regarless of whether the minor version if 0 or 2, so that's
+       not a reason to change the minor version number).
+
+       XXX - the pcapng specification says that readers should
+       just ignore sections with an unsupported version number;
+       presumably they can also report an error if they skip
+       all the way to the end of the file without finding
+       any versions that they support. */
+    if (!(version_major == 1 &&
+          (version_minor == 0 || version_minor == 2))) {
         *err = WTAP_ERR_UNSUPPORTED;
         *err_info = g_strdup_printf("pcapng_read_section_header_block: unknown SHB version %u.%u",
                                     version_major, version_minor);
@@ -1234,7 +1255,7 @@ pcapng_read_decryption_secrets_block(FILE_T fh, pcapng_block_header_t *bh,
       *err_info = g_strdup_printf("%s: secrets block is too large: %u", G_STRFUNC, dsb_mand->secrets_len);
       return FALSE;
     }
-    dsb_mand->secrets_data = (char *)g_malloc0(dsb_mand->secrets_len);
+    dsb_mand->secrets_data = (guint8 *)g_malloc0(dsb_mand->secrets_len);
     if (!wtap_read_bytes(fh, dsb_mand->secrets_data, dsb_mand->secrets_len, err, err_info)) {
         pcapng_debug("%s: failed to read DSB", G_STRFUNC);
         return FALSE;
@@ -1662,7 +1683,7 @@ pcapng_read_packet_block(FILE_T fh, pcapng_block_header_t *bh,
                     wblock->rec->packet_verdict = g_ptr_array_new_with_free_func((GDestroyNotify) g_bytes_unref);
                 }
 
-                option_content_copy = g_memdup(option_content, oh->option_length);
+                option_content_copy = g_memdup2(option_content, oh->option_length);
 
                 /* For Linux XDP and TC we might need to byte swap */
                 if (section_info->byte_swapped &&
@@ -2352,11 +2373,19 @@ pcapng_read_sysdig_event_block(FILE_T fh, pcapng_block_header_t *bh,
     guint64 thread_id;
     guint32 event_len;
     guint16 event_type;
+    guint32 nparams = 0;
+    guint min_event_size;
 
-    if (bh->block_total_length < MIN_SYSDIG_EVENT_SIZE) {
+    if (bh->block_type == BLOCK_TYPE_SYSDIG_EVENT_V2) {
+        min_event_size = MIN_SYSDIG_EVENT_V2_SIZE;
+    } else {
+        min_event_size = MIN_SYSDIG_EVENT_SIZE;
+    }
+
+    if (bh->block_total_length < min_event_size) {
         *err = WTAP_ERR_BAD_FILE;
         *err_info = g_strdup_printf("%s: total block length %u is too small (< %u)", G_STRFUNC,
-                                    bh->block_total_length, MIN_SYSDIG_EVENT_SIZE);
+                                    bh->block_total_length, min_event_size);
         return FALSE;
     }
 
@@ -2372,11 +2401,9 @@ pcapng_read_sysdig_event_block(FILE_T fh, pcapng_block_header_t *bh,
                   bh->block_total_length);
 
     wblock->rec->rec_type = REC_TYPE_SYSCALL;
-    wblock->rec->rec_header.syscall_header.record_type = BLOCK_TYPE_SYSDIG_EVENT;
+    wblock->rec->rec_header.syscall_header.record_type = bh->block_type;
     wblock->rec->presence_flags = WTAP_HAS_TS|WTAP_HAS_CAP_LEN /*|WTAP_HAS_INTERFACE_ID */;
     wblock->rec->tsprec = WTAP_TSPREC_NSEC;
-
-    block_read = block_total_length;
 
     if (!wtap_read_bytes(fh, &cpu_id, sizeof cpu_id, err, err_info)) {
         pcapng_debug("pcapng_read_packet_block: failed to read sysdig event cpu id");
@@ -2398,8 +2425,13 @@ pcapng_read_sysdig_event_block(FILE_T fh, pcapng_block_header_t *bh,
         pcapng_debug("pcapng_read_packet_block: failed to read sysdig event type");
         return FALSE;
     }
+    if (bh->block_type == BLOCK_TYPE_SYSDIG_EVENT_V2) {
+        if (!wtap_read_bytes(fh, &nparams, sizeof nparams, err, err_info)) {
+            pcapng_debug("pcapng_read_packet_block: failed to read sysdig number of parameters");
+            return FALSE;
+        }
+    }
 
-    block_read -= MIN_SYSDIG_EVENT_SIZE;
     wblock->rec->rec_header.syscall_header.byte_order = G_BYTE_ORDER;
 
     /* XXX Use Gxxx_FROM_LE macros instead? */
@@ -2421,10 +2453,13 @@ pcapng_read_sysdig_event_block(FILE_T fh, pcapng_block_header_t *bh,
         wblock->rec->rec_header.syscall_header.thread_id = thread_id;
         wblock->rec->rec_header.syscall_header.event_len = event_len;
         wblock->rec->rec_header.syscall_header.event_type = event_type;
+        wblock->rec->rec_header.syscall_header.nparams = nparams;
     }
 
     wblock->rec->ts.secs = (time_t) (ts / 1000000000);
     wblock->rec->ts.nsecs = (int) (ts % 1000000000);
+
+    block_read = block_total_length - min_event_size;
 
     wblock->rec->rec_header.syscall_header.event_filelen = block_read;
 
@@ -2755,6 +2790,7 @@ pcapng_read_block(wtap *wth, FILE_T fh, pcapng_t *pn,
                     return FALSE;
                 break;
             case(BLOCK_TYPE_SYSDIG_EVENT):
+            case(BLOCK_TYPE_SYSDIG_EVENT_V2):
             /* case(BLOCK_TYPE_SYSDIG_EVF): */
                 if (!pcapng_read_sysdig_event_block(fh, &bh, section_info, wblock, err, err_info))
                     return FALSE;
@@ -5034,7 +5070,7 @@ static gboolean pcapng_dump_finish(wtap_dumper *wdh, int *err,
 
 /* Returns TRUE on success, FALSE on failure; sets "*err" to an error code on
    failure */
-gboolean
+static gboolean
 pcapng_dump_open(wtap_dumper *wdh, int *err, gchar **err_info _U_)
 {
     guint i;
@@ -5084,7 +5120,7 @@ pcapng_dump_open(wtap_dumper *wdh, int *err, gchar **err_info _U_)
 
 /* Returns 0 if we could write the specified encapsulation type,
    an error indication otherwise. */
-int pcapng_dump_can_write_encap(int wtap_encap)
+static int pcapng_dump_can_write_encap(int wtap_encap)
 {
     pcapng_debug("pcapng_dump_can_write_encap: encap = %d (%s)",
                   wtap_encap,

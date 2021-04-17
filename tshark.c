@@ -48,6 +48,7 @@
 
 #include <ui/clopts_common.h>
 #include <ui/cmdarg_err.h>
+#include <ui/exit_codes.h>
 #include <ui/urls.h>
 #include <wsutil/filesystem.h>
 #include <wsutil/file_util.h>
@@ -101,15 +102,15 @@
 
 #include "capture_opts.h"
 
-#include "caputils/capture-pcap-util.h"
+#include "capture/capture-pcap-util.h"
 
 #ifdef HAVE_LIBPCAP
-#include "caputils/capture_ifinfo.h"
+#include "capture/capture_ifinfo.h"
 #ifdef _WIN32
-#include "caputils/capture-wpcap.h"
+#include "capture/capture-wpcap.h"
 #endif /* _WIN32 */
-#include <capchild/capture_session.h>
-#include <capchild/capture_sync.h>
+#include <capture/capture_session.h>
+#include <capture/capture_sync.h>
 #include <ui/capture_info.h>
 #endif /* HAVE_LIBPCAP */
 #include "log.h"
@@ -128,18 +129,10 @@
 #include <wsutil/plugins.h>
 #endif
 
-/* Exit codes */
-#define INVALID_OPTION 1
-#define INVALID_INTERFACE 2
-#define INVALID_FILE 2
-#define INVALID_FILTER 2
-#define INVALID_EXPORT 2
-#define INVALID_CAPABILITY 2
-#define INVALID_TAP 2
-#define INVALID_DATA_LINK 2
-#define INVALID_TIMESTAMP_TYPE 2
-#define INVALID_CAPTURE 2
-#define INIT_FAILED 2
+/* Additional exit codes */
+#define INVALID_EXPORT          2
+#define INVALID_TAP             2
+#define INVALID_CAPTURE         2
 
 #define LONGOPT_EXPORT_OBJECTS          LONGOPT_BASE_APPLICATION+1
 #define LONGOPT_COLOR                   LONGOPT_BASE_APPLICATION+2
@@ -745,7 +738,6 @@ main(int argc, char *argv[])
   volatile int         exit_status = EXIT_SUCCESS;
 #ifdef HAVE_LIBPCAP
   int                  caps_queries = 0;
-  gboolean             start_capture = FALSE;
   GList               *if_list;
   gchar               *err_str, *err_str_secondary;
   struct bpf_program   fcode;
@@ -1154,7 +1146,7 @@ main(int argc, char *argv[])
     case LONGOPT_COMPRESS_TYPE:        /* compress type */
       /* These are options only for packet capture. */
 #ifdef HAVE_LIBPCAP
-      exit_status = capture_opts_add_opt(&global_capture_opts, opt, optarg, &start_capture);
+      exit_status = capture_opts_add_opt(&global_capture_opts, opt, optarg);
       if (exit_status != 0) {
         goto clean_exit;
       }
@@ -1165,7 +1157,7 @@ main(int argc, char *argv[])
       break;
     case 'c':        /* Stop after x packets */
 #ifdef HAVE_LIBPCAP
-      exit_status = capture_opts_add_opt(&global_capture_opts, opt, optarg, &start_capture);
+      exit_status = capture_opts_add_opt(&global_capture_opts, opt, optarg);
       if (exit_status != 0) {
         goto clean_exit;
       }
@@ -1176,7 +1168,7 @@ main(int argc, char *argv[])
     case 'w':        /* Write to file x */
       output_file_name = g_strdup(optarg);
 #ifdef HAVE_LIBPCAP
-      exit_status = capture_opts_add_opt(&global_capture_opts, opt, optarg, &start_capture);
+      exit_status = capture_opts_add_opt(&global_capture_opts, opt, optarg);
       if (exit_status != 0) {
         goto clean_exit;
       }
@@ -2192,50 +2184,44 @@ main(int argc, char *argv[])
       goto clean_exit;
     }
 
-    /* if requested, list the link layer types and exit */
+    /*
+     * If requested, list the link layer types and/or time stamp types
+     * and exit.
+     */
     if (caps_queries) {
-        guint i;
+      guint i;
 
-        /* Get the list of link-layer types for the capture devices. */
-        for (i = 0; i < global_capture_opts.ifaces->len; i++) {
-          interface_options *interface_opts;
-          if_capabilities_t *caps;
-          char *auth_str = NULL;
-          int if_caps_queries = caps_queries;
+      /* Get the list of link-layer types for the capture devices. */
+      exit_status = EXIT_SUCCESS;
+      for (i = 0; i < global_capture_opts.ifaces->len; i++) {
+        interface_options *interface_opts;
+        if_capabilities_t *caps;
+        char *auth_str = NULL;
 
-          interface_opts = &g_array_index(global_capture_opts.ifaces, interface_options, i);
+        interface_opts = &g_array_index(global_capture_opts.ifaces, interface_options, i);
 #ifdef HAVE_PCAP_REMOTE
-          if (interface_opts->auth_type == CAPTURE_AUTH_PWD) {
-              auth_str = g_strdup_printf("%s:%s", interface_opts->auth_username, interface_opts->auth_password);
-          }
-#endif
-          caps = capture_get_if_capabilities(interface_opts->name, interface_opts->monitor_mode,
-                                              auth_str, &err_str, &err_str_secondary, NULL);
-          g_free(auth_str);
-          if (caps == NULL) {
-            cmdarg_err("%s%s%s", err_str, err_str_secondary ? "\n" : "", err_str_secondary ? err_str_secondary : "");
-            g_free(err_str);
-            g_free(err_str_secondary);
-            exit_status = INVALID_CAPABILITY;
-            goto clean_exit;
-          }
-          if ((if_caps_queries & CAPS_QUERY_LINK_TYPES) && caps->data_link_types == NULL) {
-            cmdarg_err("The capture device \"%s\" has no data link types.", interface_opts->name);
-            exit_status = INVALID_DATA_LINK;
-            goto clean_exit;
-          }
-          if ((if_caps_queries & CAPS_QUERY_TIMESTAMP_TYPES) && caps->timestamp_types == NULL) {
-            cmdarg_err("The capture device \"%s\" has no timestamp types.", interface_opts->name);
-            exit_status = INVALID_TIMESTAMP_TYPE;
-            goto clean_exit;
-          }
-          if (interface_opts->monitor_mode)
-                if_caps_queries |= CAPS_MONITOR_MODE;
-          capture_opts_print_if_capabilities(caps, interface_opts->name, if_caps_queries);
-          free_if_capabilities(caps);
+        if (interface_opts->auth_type == CAPTURE_AUTH_PWD) {
+          auth_str = g_strdup_printf("%s:%s", interface_opts->auth_username, interface_opts->auth_password);
         }
-        exit_status = EXIT_SUCCESS;
-        goto clean_exit;
+#endif
+        caps = capture_get_if_capabilities(interface_opts->name, interface_opts->monitor_mode,
+                                           auth_str, &err_str, &err_str_secondary, NULL);
+        g_free(auth_str);
+        if (caps == NULL) {
+          cmdarg_err("%s%s%s", err_str, err_str_secondary ? "\n" : "", err_str_secondary ? err_str_secondary : "");
+          g_free(err_str);
+          g_free(err_str_secondary);
+          exit_status = INVALID_CAPABILITY;
+          break;
+        }
+        exit_status = capture_opts_print_if_capabilities(caps, interface_opts,
+                                                         caps_queries);
+        free_if_capabilities(caps);
+        if (exit_status != EXIT_SUCCESS) {
+          break;
+        }
+      }
+      goto clean_exit;
     }
 
     /*

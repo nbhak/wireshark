@@ -20,12 +20,12 @@
 
 #include "capture_opts.h"
 
-#include "capchild/capture_session.h"
-#include "capchild/capture_sync.h"
+#include "capture/capture_session.h"
+#include "capture/capture_sync.h"
 #include "extcap.h"
 #include "log.h"
 
-#include <caputils/capture_ifinfo.h>
+#include <capture/capture_ifinfo.h>
 #include <wsutil/inet_addr.h>
 
 #ifdef HAVE_PCAP_REMOTE
@@ -321,15 +321,6 @@ capture_get_if_capabilities(const gchar *ifname, gboolean monitor_mode,
     }
 
     g_strfreev(raw_list);
-
-    /* Check to see if we built a list */
-    if (linktype_list == NULL) {
-        /* No. */
-        if (err_primary_msg)
-            *err_primary_msg = g_strdup("Dumpcap returned no link-layer types");
-        g_free(caps);
-        return NULL;
-    }
 
     caps->data_link_types = linktype_list;
     /* Might be NULL. Not all systems report timestamp types */
