@@ -491,6 +491,7 @@ calc_progbar_val(capture_file *cf, gint64 size, gint64 file_pos, gchar *status_s
 cf_read_status_t
 cf_read(capture_file *cf, gboolean reloading)
 {
+  printf("cf_read\n");
   int                  err = 0;
   gchar               *err_info = NULL;
   volatile gboolean    too_many_records = FALSE;
@@ -1629,6 +1630,7 @@ cf_read_current_record(capture_file *cf)
 static void
 rescan_packets(capture_file *cf, const char *action, const char *action_item, gboolean redissect)
 {
+  printf("rescan_packets\n");
   /* Rescan packets new packet list */
   guint32     framenum;
   frame_data *fdata;
@@ -1705,7 +1707,7 @@ rescan_packets(capture_file *cf, const char *action, const char *action_item, gb
   /* Freeze the packet list while we redo it, so we don't get any
      screen updates while it happens. */
   packet_list_freeze();
-
+  printf("1710: if(redissect)...\n");
   if (redissect) {
     /* We need to re-initialize all the state information that protocols
        keep, because some preference that controls a dissector has changed,
@@ -1779,7 +1781,6 @@ rescan_packets(capture_file *cf, const char *action, const char *action_item, gb
   frames_count = cf->count;
 
   epan_dissect_init(&edt, cf->epan, create_proto_tree, FALSE);
-
   if (redissect) {
     /*
      * Decryption secrets are read while sequentially processing records and
@@ -1792,6 +1793,9 @@ rescan_packets(capture_file *cf, const char *action, const char *action_item, gb
     wtap_set_cb_new_secrets(cf->provider.wth, secrets_wtap_callback);
   }
 
+  /* Loop of interest. */
+  printf("for framenum...\n");
+  
   for (framenum = 1; framenum <= frames_count; framenum++) {
     fdata = frame_data_sequence_find(cf->provider.frames, framenum);
 
@@ -1851,7 +1855,6 @@ rescan_packets(capture_file *cf, const char *action, const char *action_item, gb
     }
 
     count++;
-
     if (redissect) {
       /* Since all state for the frame was destroyed, mark the frame
        * as not visited, free the GSList referring to the state
@@ -1875,9 +1878,13 @@ rescan_packets(capture_file *cf, const char *action, const char *action_item, gb
       preceding_frame = prev_frame;
     }
 
+
     add_packet_to_packet_list(fdata, cf, &edt, dfcode,
                                     cinfo, &rec, &buf,
                                     add_to_packet_list);
+
+    /* Booleans of interest. */
+    printf("%d", fdata->passed_dfilter);
 
     /* If this frame is displayed, and this is the first frame we've
        seen displayed after the selected frame, remember this frame -
