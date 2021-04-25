@@ -1,5 +1,11 @@
-General Information
--------------------
+Wireshark Mako
+---------------
+
+Mako is a fork of Wireshark by Stanford Applied Cyber written to improve
+the efficiency of the filtering process.
+
+Wireshark General Information
+-----------------------------
 
 Wireshark is a network traffic analyzer, or "sniffer", for Linux, macOS,
 \*BSD and other Unix and Unix-like operating systems and for Windows.
