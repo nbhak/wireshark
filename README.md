@@ -1,3 +1,16 @@
+Wireshark Mako ----> testing
+-----------------------------
+This branch is the space for testing and developing the c and c++ wrappers.
+* All new files are under testing_n_dev
+* Instructions for compiling:
+  1. compile C code with                 gcc -c cfilename.c
+  2. compile C++ code with               g++ -c -std=c++11 cplusplusfilename.cpp
+  3. compile C and C++ object files with g++ -o outputfilename cfilename.o cplusplusfilename.o
+* Notes:
+  -In the current example, we compile with C++11 because we're using lambdas. 
+  -We compile with -c because we don't want to link our code yet.
+* Included in the folder is also a quick packet_cap for testing purposes
+
 Wireshark Mako
 ---------------
 
