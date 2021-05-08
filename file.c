@@ -1175,6 +1175,7 @@ add_packet_to_packet_list(frame_data *fdata, capture_file *cf,
     epan_dissect_t *edt, dfilter_t *dfcode, column_info *cinfo,
     wtap_rec *rec, Buffer *buf, gboolean add_to_packet_list)
 {
+  printf("Call to add_packet_to_packet_list\n");
   frame_data_set_before_dissect(fdata, &cf->elapsed_time,
                                 &cf->provider.ref, cf->provider.prev_dis);
   cf->provider.prev_cap = fdata;
@@ -1630,7 +1631,7 @@ cf_read_current_record(capture_file *cf)
 static void
 rescan_packets(capture_file *cf, const char *action, const char *action_item, gboolean redissect)
 {
-  printf("rescan_packets\n");
+  printf("Call to rescan_packets\n");
   /* Rescan packets new packet list */
   guint32     framenum;
   frame_data *fdata;
@@ -1670,6 +1671,8 @@ rescan_packets(capture_file *cf, const char *action, const char *action_item, gb
   compiled = dfilter_compile(cf->dfilter, &dfcode, NULL);
   g_assert(!cf->dfilter || (compiled && dfcode));
 
+  printf("cf->dfilter: %s\n", cf->dfilter);
+
   /* Get the union of the flags for all tap listeners. */
   tap_flags = union_of_tap_listener_flags();
 
@@ -1693,7 +1696,7 @@ rescan_packets(capture_file *cf, const char *action, const char *action_item, gb
     (dfcode != NULL || have_filtering_tap_listeners() ||
      (tap_flags & TL_REQUIRES_PROTO_TREE) ||
      (redissect && postdissectors_want_hfids()));
-
+  
   reset_tap_listeners();
   /* Which frame, if any, is the currently selected frame?
      XXX - should the selected frame or the focus frame be the "current"
@@ -1707,7 +1710,6 @@ rescan_packets(capture_file *cf, const char *action, const char *action_item, gb
   /* Freeze the packet list while we redo it, so we don't get any
      screen updates while it happens. */
   packet_list_freeze();
-  printf("1710: if(redissect)...\n");
   if (redissect) {
     /* We need to re-initialize all the state information that protocols
        keep, because some preference that controls a dissector has changed,
@@ -1884,7 +1886,7 @@ rescan_packets(capture_file *cf, const char *action, const char *action_item, gb
                                     add_to_packet_list);
 
     /* Booleans of interest. */
-    printf("%d", fdata->passed_dfilter);
+    printf(" %d", fdata->passed_dfilter);
 
     /* If this frame is displayed, and this is the first frame we've
        seen displayed after the selected frame, remember this frame -

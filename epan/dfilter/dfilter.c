@@ -198,6 +198,7 @@ dfwork_free(dfwork_t *dfw)
 gboolean
 dfilter_compile(const gchar *text, dfilter_t **dfp, gchar **err_msg)
 {
+	printf("Call to dfilter_compile: %s\n", text);
 	gchar		*expanded_text;
 	int		token;
 	dfilter_t	*dfilter;

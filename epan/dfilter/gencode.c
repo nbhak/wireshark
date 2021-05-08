@@ -568,6 +568,7 @@ gencode(dfwork_t *dfw, stnode_t *st_node)
 void
 dfw_gencode(dfwork_t *dfw)
 {
+	printf("Call to dfw_gencode\n");
 	int		id, id1, length;
 	dfvm_insn_t	*insn, *insn1, *prev;
 	dfvm_value_t	*arg1;
